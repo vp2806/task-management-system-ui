@@ -18,7 +18,7 @@ function App() {
             element={<SetPasssword />}
           />
           <Route
-            path="/set-password/:setPasswordId"
+            path="/reset-password/:setPasswordId"
             element={<SetPasssword />}
           />
         </Routes>

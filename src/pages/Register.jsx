@@ -30,7 +30,7 @@ export default function Register() {
 
   async function addUser(data) {
     try {
-      const userResponse = await postRequest("/register", data);
+      const userResponse = await postRequest("/register", data, {});
       if (userResponse.data.response_type !== "error") {
         setAlertModalInfo({
           isModalOpen: true,
@@ -59,7 +59,7 @@ export default function Register() {
       dispatch(
         updateToast({
           type: "error",
-          message: "Something Went Wrong!",
+          message: "Something Went Wrong, please try again later!",
           isShow: true,
         })
       );

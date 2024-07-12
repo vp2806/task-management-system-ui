@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import Input from "../components/Input";
 import { useForm } from "react-hook-form";
 import { postRequest } from "../helpers/axiosHelper";
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import Loader from "../components/Loader";
 import { useDispatch, useSelector } from "react-redux";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -31,19 +31,17 @@ export default function SetPasssword() {
 
   const location = useLocation();
   const paramas = useParams();
-  let url = null;
+  const navigate = useNavigate();
 
   useEffect(() => {
+    let url = null;
     if (location.pathname.startsWith("/activate-account/")) {
       url = `/activate-account/${paramas.activateId}`;
     } else {
       url = `/reset-password/${paramas.setPasswordId}`;
     }
 
-    postRequest(url, {
-      password: "",
-      confirmPassword: "",
-    })
+    postRequest(url, {}, {})
       .then((response) => {
         if (
           response.data.response_type === "error" &&
@@ -66,7 +64,7 @@ export default function SetPasssword() {
 
   async function setPassword(data) {
     try {
-      const userResponse = await postRequest(location.pathname, data);
+      const userResponse = await postRequest(location.pathname, data, {});
       if (userResponse.data.response_type !== "error") {
         dispatch(
           updateToast({
@@ -83,7 +81,8 @@ export default function SetPasssword() {
               isShow: false,
             })
           );
-        }, 2000);
+          navigate("/login");
+        }, 1000);
         reset();
       } else {
         dispatch(
@@ -107,7 +106,7 @@ export default function SetPasssword() {
       dispatch(
         updateToast({
           type: "error",
-          message: "Something Went Wrong!",
+          message: "Something Went Wrong, please try again later!",
           isShow: true,
         })
       );
@@ -126,7 +125,7 @@ export default function SetPasssword() {
   return (
     <>
       <Toast
-        toastId="registerToast"
+        toastId="passwordToast"
         isShow={toastInfo.isShow}
         type={toastInfo.type}
         message={toastInfo.message}
@@ -144,7 +143,7 @@ export default function SetPasssword() {
             </h2>
             <p className="mb-4">Set Password</p>
             <form
-              id="addUser"
+              id="setPassword"
               className="space-y-6"
               onSubmit={handleSubmit(setPassword)}
             >
