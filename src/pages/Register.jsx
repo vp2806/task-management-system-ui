@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { updateToast } from "../features/users/userSlice";
 import { postRequest } from "../helpers/axiosHelper";
 import { useState } from "react";
-import Modal from "../components/AlertModal";
+import AlertModal from "../components/AlertModal";
 
 export default function Register() {
   const userData = useSelector((state) => state.user);
@@ -83,7 +83,7 @@ export default function Register() {
         type={toastInfo.type}
         message={toastInfo.message}
       />
-      <Modal
+      <AlertModal
         isModalOpen={alertModalInfo.isModalOpen}
         setAlertModalInfo={setAlertModalInfo}
         modalTitle="Activate Account"
