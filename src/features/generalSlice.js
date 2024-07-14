@@ -10,8 +10,8 @@ const initialState = {
   error: null,
 };
 
-const userSlice = createSlice({
-  name: "user",
+const generalSlice = createSlice({
+  name: "general",
   initialState,
   reducers: {
     updateToast: (state, action) => {
@@ -24,6 +24,6 @@ const userSlice = createSlice({
   },
 });
 
-export const { updateToast, updateLoading } = userSlice.actions;
+export const { updateToast, updateLoading } = generalSlice.actions;
 
-export default userSlice.reducer;
+export default generalSlice.reducer;

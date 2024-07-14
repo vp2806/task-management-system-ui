@@ -4,13 +4,13 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema } from "../validations/userValidation";
 import { useDispatch, useSelector } from "react-redux";
-import { updateToast } from "../features/users/userSlice";
+import { updateToast } from "../features/generalSlice";
 import { postRequest } from "../helpers/axiosHelper";
 import Toast from "../components/Toast";
 
 export default function Login() {
-  const userData = useSelector((state) => state.user);
-  const { toastInfo } = userData;
+  const generalData = useSelector((state) => state.general);
+  const { toastInfo } = generalData;
   const dispatch = useDispatch();
   const navigate = useNavigate();
 

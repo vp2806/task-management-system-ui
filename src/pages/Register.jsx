@@ -5,14 +5,14 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { userSchema } from "../validations/userValidation";
 import { useDispatch, useSelector } from "react-redux";
-import { updateToast } from "../features/users/userSlice";
+import { updateToast } from "../features/generalSlice";
 import { postRequest } from "../helpers/axiosHelper";
 import { useState } from "react";
 import AlertModal from "../components/AlertModal";
 
 export default function Register() {
-  const userData = useSelector((state) => state.user);
-  const { toastInfo } = userData;
+  const generalData = useSelector((state) => state.general);
+  const { toastInfo } = generalData;
   const dispatch = useDispatch();
   const [alertModalInfo, setAlertModalInfo] = useState({
     isModalOpen: false,

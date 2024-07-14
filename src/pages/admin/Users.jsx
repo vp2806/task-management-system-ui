@@ -7,7 +7,7 @@ import { transformData } from "../../helpers/transformData";
 import Swal from "../../helpers/swal";
 import Loader from "../../components/Loader";
 import { useDispatch, useSelector } from "react-redux";
-import { updateLoading, updateToast } from "../../features/users/userSlice";
+import { updateLoading, updateToast } from "../../features/generalSlice";
 import Toast from "../../components/Toast";
 import Error from "../../components/Error";
 import Input from "../../components/Input";
@@ -15,8 +15,8 @@ import { useDebouncedValue } from "../../hooks/useDebounce";
 import { userMapping } from "../../helpers/tableColumnMapping";
 
 export default function Users() {
-  const userData = useSelector((state) => state.user);
-  const { isLoading, error, toastInfo } = userData;
+  const generalData = useSelector((state) => state.general);
+  const { isLoading, error, toastInfo } = generalData;
   const dispatch = useDispatch();
   const recordPerPage = 3;
 
@@ -81,7 +81,6 @@ export default function Users() {
   }, []);
 
   useEffect(() => {
-    console.log(debounceSearchValue, "called");
     if (debounceSearchValue !== "") {
       const newSearchData = users?.originalData.filter((data) => {
         if (
@@ -199,7 +198,7 @@ export default function Users() {
             isDelete ? "pointer-events-none  " : ""
           }`}
           onClick={() => {
-            handleDelete(data.id);
+            handleDelete(data.Id);
           }}
         >
           <svg

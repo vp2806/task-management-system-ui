@@ -8,11 +8,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { setPasswordSchema } from "../validations/userValidation";
 import Toast from "../components/Toast";
-import { updateToast } from "../features/users/userSlice";
+import { updateToast } from "../features/generalSlice";
 
 export default function SetPasssword() {
-  const userData = useSelector((state) => state.user);
-  const { toastInfo } = userData;
+  const generalData = useSelector((state) => state.general);
+  const { toastInfo } = generalData;
   const dispatch = useDispatch();
 
   const {
