@@ -2,23 +2,25 @@ import { useEffect, useState } from "react";
 import AdminSideBar from "../../components/AdminSideBar";
 import DataTable from "../../components/DataTable";
 import Pagination from "../../components/Pagination";
-import { getUsers } from "../../services/admin/user";
+import { getUsers, deleteUser } from "../../services/admin/user";
 import { transformData } from "../../helpers/transformData";
 import Swal from "../../helpers/swal";
 import Loader from "../../components/Loader";
+import { useDispatch, useSelector } from "react-redux";
+import { updateLoading, updateToast } from "../../features/users/userSlice";
+import Toast from "../../components/Toast";
+import Error from "../../components/Error";
+import Input from "../../components/Input";
+import { useDebouncedValue } from "../../hooks/useDebounce";
+import { userMapping } from "../../helpers/tableColumnMapping";
 
 export default function Users() {
-  const recordPerPage = 10;
-  const columnMapping = {
-    id: "Id",
-    first_name: "First Name",
-    last_name: "Last Name",
-    email: "Email",
-    dob: "DOB",
-    contact_number: "Contact Number",
-    created_at: "Created At",
-    deleted_at: "Deleted At",
-  };
+  const userData = useSelector((state) => state.user);
+  const { isLoading, error, toastInfo } = userData;
+  const dispatch = useDispatch();
+  const recordPerPage = 3;
+
+  const [pageNumber, setPageNumber] = useState(1);
 
   const [limitOfData, setlimitOfData] = useState({
     lowerLimitOfData: 0,
@@ -27,28 +29,108 @@ export default function Users() {
 
   const [users, setUsers] = useState({
     originalData: [],
-    columns: [],
     transformData: [],
+    filteredData: [],
+    searchData: [],
   });
 
-  useEffect(() => {
+  const [searchValue, setSearchValue] = useState("");
+  const debounceSearchValue = useDebouncedValue(searchValue, 500);
+
+  const getData = () => {
     getUsers().then((data) => {
       if (Array.isArray(data)) {
-        transformData(data, columnMapping, ActionElements, limitOfData).then(
+        transformData(data, userMapping, ActionElements, limitOfData).then(
           (response) => {
+            dispatch(
+              updateLoading({
+                isLoading: false,
+                error: null,
+              })
+            );
             setUsers({
               originalData: data,
-              columns: response.columns,
-              transformData: response.filteredData,
+              transformData: response.transformedData,
+              filteredData: response.transformedData?.slice(
+                limitOfData.lowerLimitOfData,
+                limitOfData.upperLimitOfData
+              ),
+              searchData: [],
             });
           }
         );
+      } else {
+        dispatch(
+          updateLoading({
+            isLoading: false,
+            error: data,
+          })
+        );
       }
     });
+  };
+
+  useEffect(() => {
+    dispatch(
+      updateLoading({
+        isLoading: true,
+        error: null,
+      })
+    );
+    getData();
+  }, []);
+
+  useEffect(() => {
+    console.log(debounceSearchValue, "called");
+    if (debounceSearchValue !== "") {
+      const newSearchData = users?.originalData.filter((data) => {
+        if (
+          data.first_name
+            .toLowerCase()
+            .search(debounceSearchValue.toLowerCase()) !== -1 ||
+          data.last_name
+            .toLowerCase()
+            .search(debounceSearchValue.toLowerCase()) !== -1
+        ) {
+          return true;
+        }
+        return false;
+      });
+      setUsers({
+        ...users,
+        ["searchData"]: newSearchData,
+        ["filteredData"]: newSearchData?.slice(0, recordPerPage),
+      });
+    } else {
+      setUsers({
+        ...users,
+        ["searchData"]: [],
+        ["filteredData"]: users?.transformData?.slice(0, recordPerPage),
+      });
+    }
+  }, [debounceSearchValue]);
+
+  useEffect(() => {
+    if (debounceSearchValue === "") {
+      setUsers({
+        ...users,
+        ["filteredData"]: users?.transformData?.slice(
+          limitOfData.lowerLimitOfData,
+          limitOfData.upperLimitOfData
+        ),
+      });
+    } else {
+      setUsers({
+        ...users,
+        ["filteredData"]: users?.searchData?.slice(
+          limitOfData.lowerLimitOfData,
+          limitOfData.upperLimitOfData
+        ),
+      });
+    }
   }, [limitOfData]);
 
   function handleDelete(userId) {
-    console.log(userId);
     Swal.fire({
       title: "Are you sure?",
       text: "You won't be able to revert this!",
@@ -57,15 +139,65 @@ export default function Users() {
       confirmButtonText: "Yes, delete it!",
     }).then(async (result) => {
       if (result.isConfirmed) {
+        const response = await deleteUser(userId);
+
+        if (
+          response?.data?.response_type &&
+          response.data.response_type !== "error"
+        ) {
+          dispatch(
+            updateToast({
+              type: "success",
+              message: "User Deleted Successfully!",
+              isShow: true,
+            })
+          );
+          getData();
+          setlimitOfData({
+            lowerLimitOfData: 0,
+            upperLimitOfData: recordPerPage,
+          });
+
+          setPageNumber(1);
+
+          setTimeout(() => {
+            dispatch(
+              updateToast({
+                type: "success",
+                message: null,
+                isShow: false,
+              })
+            );
+          }, 1000);
+        } else {
+          dispatch(
+            updateToast({
+              type: "error",
+              message: response?.data?.message || response,
+              isShow: true,
+            })
+          );
+          setTimeout(() => {
+            dispatch(
+              updateToast({
+                type: "error",
+                message: null,
+                isShow: false,
+              })
+            );
+          }, 4000);
+        }
       }
     });
   }
 
-  function ActionElements(data) {
+  function ActionElements(data, isDelete) {
     return (
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-4 cursor-not-allowed">
         <div
-          className="w-6 h-6 cursor-pointer"
+          className={`w-6 h-6 cursor-pointer ${
+            isDelete ? "pointer-events-none  " : ""
+          }`}
           onClick={() => {
             handleDelete(data.id);
           }}
@@ -90,32 +222,71 @@ export default function Users() {
     );
   }
 
+  function handleSearch(event) {
+    setSearchValue(event.target.value.trim());
+  }
+
   return (
     <>
       <AdminSideBar />
-      <div className="p-14 mt-14 sm:ml-64">
-        {users.columns.length > 0 && users.transformData.length > 0 ? (
-          <>
-            <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
-              <DataTable
-                id="userTable"
-                className="w-full text-base text-left text-gray-500 dark:text-gray-400"
-                columns={users.columns}
-                data={users.transformData}
-              />
-            </div>
-            <Pagination
-              data={users.originalData}
-              recordPerPage={recordPerPage}
-              limitOfData={limitOfData}
-              handleLimitOfData={setlimitOfData}
-            />
-          </>
+      <Toast
+        toastId="userToast"
+        isShow={toastInfo.isShow}
+        type={toastInfo.type}
+        message={toastInfo.message}
+      />
+      <div className="p-14 mt-20 sm:ml-64">
+        {!isLoading ? (
+          !error && (
+            <>
+              {users.originalData.length === 0 ? (
+                <h1 className="text-center text-2xl font-extrabold text-gray-700">
+                  No Data Found
+                </h1>
+              ) : (
+                <>
+                  <div className="flex justify-end">
+                    <Input
+                      parentClassName="mb-6 w-64"
+                      inputType="search"
+                      className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 require"
+                      inputId="searchUser"
+                      inputName="searchUser"
+                      registerInput={() => {}}
+                      inputPlaceholder={"Search User by Name"}
+                      handleChange={handleSearch}
+                    />
+                  </div>
+                  <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
+                    <DataTable
+                      id="userTable"
+                      className="w-full text-base text-left text-gray-500 dark:text-gray-400"
+                      columns={users?.transformData[0]}
+                      data={users?.filteredData}
+                    />
+                  </div>
+                  <Pagination
+                    data={
+                      debounceSearchValue !== ""
+                        ? users.searchData
+                        : users.originalData
+                    }
+                    recordPerPage={recordPerPage}
+                    limitOfData={limitOfData}
+                    handleLimitOfData={setlimitOfData}
+                    pageNumber={pageNumber}
+                    setPageNumber={setPageNumber}
+                  />
+                </>
+              )}
+            </>
+          )
         ) : (
           <Loader
             className={"flex items-center justify-center w-full rounded-lg p-5"}
           />
         )}
+        {error && <Error error={error} />}
       </div>
     </>
   );

@@ -1,17 +1,11 @@
-export function transformData(
-  originalData,
-  columnMapping,
-  actionElements,
-  limitOfData
-) {
+export function transformData(originalData, columnMapping, actionElements) {
   return new Promise((resolve, reject) => {
     try {
       let columns = [];
       let transformedData = [];
-      let filteredData = [];
 
       if (originalData?.length > 0) {
-        //Filter the column from products data
+        //Filter the column from  data
         columns = Object.keys(originalData[0]);
         if (actionElements) {
           columns.push("Actions");
@@ -20,37 +14,36 @@ export function transformData(
         originalData?.forEach((data) => {
           let newData = {};
           columns.map((column) => {
-            if (data[column]) {
+            if (data[column] && columnMapping[column]) {
+              newData = { ...newData, [columnMapping[column]]: data[column] };
+            } else if (data[column] && !columnMapping[column]) {
               newData = { ...newData, [column]: data[column] };
+            } else if (data[column] === null && columnMapping[column]) {
+              newData = { ...newData, [[columnMapping[column]]]: "-" };
             } else if (data[column] === null) {
               newData = { ...newData, [column]: "-" };
             } else if (actionElements) {
-              newData = {
-                ...newData,
-                [column]: actionElements(newData),
-              };
+              if (data["deleted_at"]) {
+                newData = {
+                  ...newData,
+                  [column]: actionElements(newData, true),
+                };
+              } else {
+                newData = {
+                  ...newData,
+                  [column]: actionElements(newData, false),
+                };
+              }
             }
             return column;
           });
           transformedData.push(newData);
         });
-
-        //Mapping the colun name
-        columns = columns.map((column) => {
-          if (columnMapping[column]) {
-            return columnMapping[column];
-          }
-        });
       }
 
-      filteredData = transformedData?.slice(
-        limitOfData.lowerLimitOfData,
-        limitOfData.upperLimitOfData
-      );
-
-      return resolve({ columns, filteredData });
+      return resolve({ transformedData });
     } catch (error) {
-      return reject({ columns: null, filteredData: null });
+      return reject({ transformedData: null });
     }
   });
 }

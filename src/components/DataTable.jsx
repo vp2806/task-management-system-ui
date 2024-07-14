@@ -1,6 +1,6 @@
 export default function DataTableComp({ id, className, columns, data }) {
   function getColumns() {
-    const productColumn = columns.map((column, index) => {
+    const productColumn = Object.keys(columns).map((column, index) => {
       return (
         <th key={index} className="px-6 py-3">
           {column}

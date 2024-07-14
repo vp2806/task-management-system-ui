@@ -1,13 +1,13 @@
-import { useState } from "react";
-
 export default function Pagination({
   data,
   recordPerPage,
   limitOfData,
   handleLimitOfData,
+  pageNumber,
+  setPageNumber,
 }) {
-  const [pageNumber, setPageNumber] = useState(1);
   const lastPageNumber = Math.ceil(data?.length / recordPerPage);
+
   function handlePagination(event) {
     if (event.target.id === "moveToFirstPage") {
       handleLimitOfData({

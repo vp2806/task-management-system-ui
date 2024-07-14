@@ -91,7 +91,7 @@ export default function Register() {
         buttonLink={alertModalInfo.buttonLink}
         buttonText="Activate Account"
       />
-      <div className="flex flex-1 flex-col  min-h-full lg:mx-auto mt-14 lg:w-full lg:max-w-lg  px-6 py-7">
+      <div className="flex flex-1 flex-col  min-h-full lg:mx-auto mt-24 lg:w-full lg:max-w-lg  px-6 py-7">
         <div className="p-5 bg-white border border-gray-200 rounded-lg shadow">
           <h2 className="mb-2 text-4xl font-bold leading-9 tracking-tight text-gray-900">
             Task Manager
