@@ -12,7 +12,8 @@ export default function useServiceOperation() {
     tableColumnMapping,
     actionElements,
     limitOfData,
-    setData
+    setData,
+    columnValueMapping
   ) => {
     return new Promise((resolve) => {
       if (getOperation) {
@@ -22,7 +23,7 @@ export default function useServiceOperation() {
               data,
               tableColumnMapping,
               actionElements,
-              limitOfData
+              columnValueMapping
             ).then((response) => {
               dispatch(
                 updateLoading({

@@ -1,15 +1,16 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import logo from "../assets/task_manager_logo.png";
 import userIcon from "../assets/user_icon.png";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 
 export default function AdminSideBar() {
-  const userNavigation = [
-    { name: "Your Profile", href: "/admin/profile" },
-    { name: "Logout", href: "/logout" },
-  ];
-
   const location = useLocation();
+  const navigate = useNavigate();
+
+  const logoutUser = () => {
+    localStorage.removeItem("token");
+    navigate("/login");
+  };
 
   return (
     <>
@@ -42,16 +43,22 @@ export default function AdminSideBar() {
                     transition
                     className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 transition focus:outline-none data-[closed]:scale-95 data-[closed]:transform data-[closed]:opacity-0 data-[enter]:duration-100 data-[leave]:duration-75 data-[enter]:ease-out data-[leave]:ease-in"
                   >
-                    {userNavigation.map((item) => (
-                      <MenuItem key={item.name}>
-                        <a
-                          href={item.href}
-                          className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100"
-                        >
-                          {item.name}
-                        </a>
-                      </MenuItem>
-                    ))}
+                    <MenuItem>
+                      <Link
+                        to="/admin/profile"
+                        className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100 cursor-pointer"
+                      >
+                        Your Profile
+                      </Link>
+                    </MenuItem>
+                    <MenuItem>
+                      <div
+                        className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100 cursor-pointer"
+                        onClick={logoutUser}
+                      >
+                        Logout
+                      </div>
+                    </MenuItem>
                   </MenuItems>
                 </Menu>
               </div>

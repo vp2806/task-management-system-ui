@@ -24,7 +24,12 @@ export default function DataTableComp({ id, className, columns, data }) {
   function getOneRecord(data) {
     const oneRecord = Object.values(data).map((value, index) => {
       return (
-        <td key={index} className="px-6 py-3">
+        <td
+          key={index}
+          className={`px-6 py-3 ${value === "Inactive" && "text-red-700"} ${
+            value === "Active" && "text-green-900"
+          }`}
+        >
           {value}
         </td>
       );

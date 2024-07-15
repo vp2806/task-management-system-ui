@@ -1,4 +1,9 @@
-export function transformData(originalData, columnMapping, actionElements) {
+export function transformData(
+  originalData,
+  columnMapping,
+  actionElements,
+  columnValueMapping
+) {
   return new Promise((resolve, reject) => {
     try {
       let columns = [];
@@ -14,10 +19,28 @@ export function transformData(originalData, columnMapping, actionElements) {
         originalData?.forEach((data) => {
           let newData = {};
           columns.map((column) => {
-            if (data[column] && columnMapping[column]) {
-              newData = { ...newData, [columnMapping[column]]: data[column] };
+            if (data[column] !== null && columnMapping[column]) {
+              if (columnValueMapping && columnValueMapping[column]) {
+                newData = {
+                  ...newData,
+                  [columnMapping[column]]:
+                    columnValueMapping[column][data[column]],
+                };
+              } else {
+                newData = { ...newData, [columnMapping[column]]: data[column] };
+              }
             } else if (data[column] && !columnMapping[column]) {
-              newData = { ...newData, [column]: data[column] };
+              if (columnValueMapping && columnValueMapping[column]) {
+                newData = {
+                  ...newData,
+                  [column]: columnValueMapping[column][data[column]],
+                };
+              } else {
+                newData = {
+                  ...newData,
+                  [column]: data[column],
+                };
+              }
             } else if (data[column] === null && columnMapping[column]) {
               newData = { ...newData, [[columnMapping[column]]]: "-" };
             } else if (data[column] === null) {

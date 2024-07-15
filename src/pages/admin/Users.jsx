@@ -3,8 +3,6 @@ import AdminSideBar from "../../components/AdminSideBar";
 import DataTable from "../../components/DataTable";
 import Pagination from "../../components/Pagination";
 import { getUsers, deleteUser } from "../../services/admin/user";
-import { transformData } from "../../helpers/transformData";
-import Swal from "../../helpers/swal";
 import Loader from "../../components/Loader";
 import { useDispatch, useSelector } from "react-redux";
 import { updateLoading, updateToast } from "../../features/generalSlice";
@@ -12,15 +10,17 @@ import Toast from "../../components/Toast";
 import Error from "../../components/Error";
 import Input from "../../components/Input";
 import { useDebouncedValue } from "../../hooks/useDebounce";
-import { userMapping } from "../../helpers/tableColumnMapping";
+import {
+  userColumnValueMapping,
+  userMapping,
+} from "../../helpers/tableColumnMapping";
 import useServiceOperation from "../../hooks/useServiceOperation";
-import NoWorkResult from "postcss/lib/no-work-result";
 
 export default function Users() {
   const generalData = useSelector((state) => state.general);
   const { isLoading, error, toastInfo } = generalData;
   const dispatch = useDispatch();
-  const recordPerPage = 3;
+  const recordPerPage = 10;
 
   const [pageNumber, setPageNumber] = useState(1);
 
@@ -47,7 +47,14 @@ export default function Users() {
         error: null,
       })
     );
-    getData(getUsers, userMapping, ActionElements, limitOfData, setUsers);
+    getData(
+      getUsers,
+      userMapping,
+      ActionElements,
+      limitOfData,
+      setUsers,
+      userColumnValueMapping
+    );
   }, []);
 
   useEffect(() => {
@@ -121,7 +128,8 @@ export default function Users() {
                     userMapping,
                     ActionElements,
                     limitOfData,
-                    setUsers
+                    setUsers,
+                    userColumnValueMapping
                   );
                 }
               });
