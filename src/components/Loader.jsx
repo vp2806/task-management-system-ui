@@ -1,6 +1,6 @@
-export default function Loader() {
+export default function Loader({ className }) {
   return (
-    <div className="flex items-center justify-center w-full rounded-lg mt-12">
+    <div className={className}>
       <div role="status">
         <svg
           aria-hidden="true"

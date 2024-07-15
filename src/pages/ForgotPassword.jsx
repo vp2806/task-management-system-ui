@@ -3,14 +3,14 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { emailSchema } from "../validations/userValidation";
 import { useDispatch, useSelector } from "react-redux";
-import { updateToast } from "../features/users/userSlice";
+import { updateToast } from "../features/generalSlice";
 import { useNavigate } from "react-router-dom";
 import Toast from "../components/Toast";
 import { postRequest } from "../helpers/axiosHelper";
 
 export default function ForgotPassword() {
-  const userData = useSelector((state) => state.user);
-  const { toastInfo } = userData;
+  const generalData = useSelector((state) => state.general);
+  const { toastInfo } = generalData;
   const dispatch = useDispatch();
   const navigate = useNavigate();
 

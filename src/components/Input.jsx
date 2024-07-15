@@ -19,9 +19,12 @@ export default function Input({
 }) {
   return (
     <div className={parentClassName}>
-      <label htmlFor={inputId} className={labelClassName}>
-        {label} {isCompulsory && <span className="text-red-600">*</span>}
-      </label>
+      {label && (
+        <label htmlFor={inputId} className={labelClassName}>
+          {label} {isCompulsory && <span className="text-red-600">*</span>}
+        </label>
+      )}
+
       <input
         type={inputType}
         className={className}

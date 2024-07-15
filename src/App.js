@@ -3,6 +3,10 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import ForgotPassword from "./pages/ForgotPassword";
 import SetPasssword from "./pages/SetPasssword";
+import Dashboard from "./pages/admin/Dashboard";
+import Users from "./pages/admin/Users";
+import TaskCategories from "./pages/admin/TaskCategories";
+import Projects from "./pages/admin/Projects";
 
 function App() {
   return (
@@ -21,6 +25,10 @@ function App() {
             path="/reset-password/:setPasswordId"
             element={<SetPasssword />}
           />
+          <Route path="/admin/dashboard" element={<Dashboard />} />
+          <Route path="/admin/users" element={<Users />} />
+          <Route path="/admin/task-categories" element={<TaskCategories />} />
+          <Route path="/admin/projects" element={<Projects />} />
         </Routes>
       </Router>
     </div>

@@ -1,9 +1,13 @@
 export default function Toast({ toastId, isShow, type, message }) {
   return (
-    <div className={`flex justify-center ${isShow ? "" : "hidden"}`}>
+    <div
+      className={`fixed z-50 top-0 left-1/2 -translate-x-1/2 ${
+        isShow ? "" : "hidden"
+      }`}
+    >
       <div
         id={toastId}
-        className="flex items-center w-[467px] p-3 mt-6 text-gray-500 bg-white rounded-lg shadow"
+        className="flex items-center w-[467px] p-3 mt-12 text-gray-500 bg-white rounded-lg shadow"
         role="alert"
       >
         <div

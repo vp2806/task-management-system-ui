@@ -5,14 +5,14 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { userSchema } from "../validations/userValidation";
 import { useDispatch, useSelector } from "react-redux";
-import { updateToast } from "../features/users/userSlice";
+import { updateToast } from "../features/generalSlice";
 import { postRequest } from "../helpers/axiosHelper";
 import { useState } from "react";
-import Modal from "../components/AlertModal";
+import AlertModal from "../components/AlertModal";
 
 export default function Register() {
-  const userData = useSelector((state) => state.user);
-  const { toastInfo } = userData;
+  const generalData = useSelector((state) => state.general);
+  const { toastInfo } = generalData;
   const dispatch = useDispatch();
   const [alertModalInfo, setAlertModalInfo] = useState({
     isModalOpen: false,
@@ -83,7 +83,7 @@ export default function Register() {
         type={toastInfo.type}
         message={toastInfo.message}
       />
-      <Modal
+      <AlertModal
         isModalOpen={alertModalInfo.isModalOpen}
         setAlertModalInfo={setAlertModalInfo}
         modalTitle="Activate Account"
@@ -91,7 +91,7 @@ export default function Register() {
         buttonLink={alertModalInfo.buttonLink}
         buttonText="Activate Account"
       />
-      <div className="flex flex-1 flex-col  min-h-full lg:mx-auto mt-14 lg:w-full lg:max-w-lg  px-6 py-7">
+      <div className="flex flex-1 flex-col  min-h-full lg:mx-auto mt-24 lg:w-full lg:max-w-lg  px-6 py-7">
         <div className="p-5 bg-white border border-gray-200 rounded-lg shadow">
           <h2 className="mb-2 text-4xl font-bold leading-9 tracking-tight text-gray-900">
             Task Manager
