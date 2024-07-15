@@ -2,17 +2,20 @@ import { useEffect, useState } from "react";
 import AdminSideBar from "../../components/AdminSideBar";
 import DataTable from "../../components/DataTable";
 import Pagination from "../../components/Pagination";
-import { getTaskCategories } from "../../services/admin/taskCategory";
-import { transformData } from "../../helpers/transformData";
-import Swal from "../../helpers/swal";
+import {
+  deleteTaskCategory,
+  getTaskCategories,
+} from "../../services/admin/taskCategory";
 import Loader from "../../components/Loader";
 import { useDispatch, useSelector } from "react-redux";
-import { updateLoading, updateToast } from "../../features/generalSlice";
+import { updateLoading } from "../../features/generalSlice";
 import Toast from "../../components/Toast";
 import Error from "../../components/Error";
 import Input from "../../components/Input";
 import { useDebouncedValue } from "../../hooks/useDebounce";
 import { taskCategoryMapping } from "../../helpers/tableColumnMapping";
+import Modal from "../../components/Modal";
+import useServiceOperation from "../../hooks/useServiceOperation";
 
 export default function TaskCategories() {
   const generalData = useSelector((state) => state.general);
@@ -35,43 +38,10 @@ export default function TaskCategories() {
   });
 
   const [searchValue, setSearchValue] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [toBeUpdate, setToBeUpdate] = useState(null);
   const debounceSearchValue = useDebouncedValue(searchValue, 500);
-
-  const getData = () => {
-    getTaskCategories().then((data) => {
-      if (Array.isArray(data)) {
-        transformData(
-          data,
-          taskCategoryMapping,
-          ActionElements,
-          limitOfData
-        ).then((response) => {
-          dispatch(
-            updateLoading({
-              isLoading: false,
-              error: null,
-            })
-          );
-          setTaskCategories({
-            originalData: data,
-            transformData: response.transformedData,
-            filteredData: response.transformedData?.slice(
-              limitOfData.lowerLimitOfData,
-              limitOfData.upperLimitOfData
-            ),
-            searchData: [],
-          });
-        });
-      } else {
-        dispatch(
-          updateLoading({
-            isLoading: false,
-            error: data,
-          })
-        );
-      }
-    });
-  };
+  const { getData, handleUpdate, handleDelete } = useServiceOperation();
 
   useEffect(() => {
     dispatch(
@@ -80,15 +50,20 @@ export default function TaskCategories() {
         error: null,
       })
     );
-    getData();
+    getData(
+      getTaskCategories,
+      taskCategoryMapping,
+      ActionElements,
+      limitOfData,
+      setTaskCategories
+    );
   }, []);
 
   useEffect(() => {
-    console.log(debounceSearchValue, "called");
     if (debounceSearchValue !== "") {
-      const newSearchData = taskCategories?.originalData.filter((data) => {
+      const newSearchData = taskCategories?.transformData.filter((data) => {
         if (
-          data.category_name
+          data["Category Name"]
             .toLowerCase()
             .search(debounceSearchValue.toLowerCase()) !== -1
         ) {
@@ -133,73 +108,16 @@ export default function TaskCategories() {
     }
   }, [limitOfData]);
 
-  function handleDelete(userId) {
-    // Swal.fire({
-    //   title: "Are you sure?",
-    //   text: "You won't be able to revert this!",
-    //   icon: "warning",
-    //   showCancelButton: true,
-    //   confirmButtonText: "Yes, delete it!",
-    // }).then(async (result) => {
-    //   if (result.isConfirmed) {
-    //     const response = await deleteUser(userId);
-    //     if (
-    //       response?.data?.response_type &&
-    //       response.data.response_type !== "error"
-    //     ) {
-    //       dispatch(
-    //         updateToast({
-    //           type: "success",
-    //           message: "User Deleted Successfully!",
-    //           isShow: true,
-    //         })
-    //       );
-    //       getData();
-    //       setlimitOfData({
-    //         lowerLimitOfData: 0,
-    //         upperLimitOfData: recordPerPage,
-    //       });
-    //       setPageNumber(1);
-    //       setTimeout(() => {
-    //         dispatch(
-    //           updateToast({
-    //             type: "success",
-    //             message: null,
-    //             isShow: false,
-    //           })
-    //         );
-    //       }, 1000);
-    //     } else {
-    //       dispatch(
-    //         updateToast({
-    //           type: "error",
-    //           message: response?.data?.message || response,
-    //           isShow: true,
-    //         })
-    //       );
-    //       setTimeout(() => {
-    //         dispatch(
-    //           updateToast({
-    //             type: "error",
-    //             message: null,
-    //             isShow: false,
-    //           })
-    //         );
-    //       }, 4000);
-    //     }
-    //   }
-    // });
-  }
-
   function ActionElements(data, isDelete) {
     return (
       <div className="flex items-center gap-4">
         <div
-          className={`w-6 h-6 cursor-pointer ${
-            isDelete ? "pointer-events-none  " : ""
-          }`}
+          className={"w-6 h-6 cursor-pointer"}
           onClick={() => {
-            handleDelete(data.id);
+            handleUpdate(setIsModalOpen, setToBeUpdate, {
+              id: data.Id,
+              categoryName: data["Category Name"],
+            });
           }}
         >
           <svg
@@ -221,11 +139,29 @@ export default function TaskCategories() {
           </svg>
         </div>
         <div
-          className={`w-6 h-6 cursor-pointer ${
-            isDelete ? "pointer-events-none  " : ""
+          className={`w-6 h-6 ${
+            isDelete ? "cursor-not-allowed" : "cursor-pointer"
           }`}
           onClick={() => {
-            handleDelete(data.id);
+            if (!isDelete) {
+              handleDelete(
+                deleteTaskCategory,
+                data.Id,
+                setlimitOfData,
+                setPageNumber,
+                recordPerPage
+              ).then((response) => {
+                if (response) {
+                  getData(
+                    getTaskCategories,
+                    taskCategoryMapping,
+                    ActionElements,
+                    limitOfData,
+                    setTaskCategories
+                  );
+                }
+              });
+            }
           }}
         >
           <svg
@@ -261,6 +197,25 @@ export default function TaskCategories() {
         type={toastInfo.type}
         message={toastInfo.message}
       />
+      <Modal
+        isModalOpen={isModalOpen}
+        setIsModalOpen={setIsModalOpen}
+        modalTitle={toBeUpdate ? "Update Task Category" : "Add Task Category"}
+        data={toBeUpdate}
+        setToBeUpdate={setToBeUpdate}
+        setlimitOfData={setlimitOfData}
+        setPageNumber={setPageNumber}
+        recordPerPage={recordPerPage}
+        getData={async () => {
+          await getData(
+            getTaskCategories,
+            taskCategoryMapping,
+            ActionElements,
+            limitOfData,
+            setTaskCategories
+          );
+        }}
+      />
       <div className="p-14 mt-20 sm:ml-64">
         {!isLoading ? (
           !error && (
@@ -283,7 +238,12 @@ export default function TaskCategories() {
                       handleChange={handleSearch}
                     />
 
-                    <div className="text-center w-44 text-white bg-gray-900 hover:bg-gray-800 rounded-full font-medium text-sm px-5 py-2.5 me-2 mb-2 cursor-pointer">
+                    <div
+                      className="text-center w-44 text-white bg-gray-900 hover:bg-gray-800 rounded-full font-medium text-sm px-5 py-2.5 me-2 mb-2 cursor-pointer"
+                      onClick={() => {
+                        setIsModalOpen(true);
+                      }}
+                    >
                       Add Task Category
                     </div>
                   </div>
