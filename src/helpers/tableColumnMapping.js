@@ -28,9 +28,26 @@ export const taskCategoryMapping = {
 export const userProjectMapping = {
   id: "Id",
   user_id: "User Id",
+  project_unique_id: "ProjectUniqueId",
   title: "Title",
   description: "Description",
   created_at: "Created At",
   updated_at: "Updated At",
   delete_at: "Delete At",
+};
+
+export const projectTaskMapping = {
+  id: "Id",
+  project_unique_id: "Project Unique Id",
+  title: "Title",
+  description: "Description",
+  due_date: "Due Date",
+  assigned_to: "Assigned To",
+  created_at: "Created At",
+  updated_at: "Updated At",
+};
+
+export const optionsMapping = {
+  category_name: "value",
+  assignee_name: "value",
 };

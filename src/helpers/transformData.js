@@ -29,7 +29,7 @@ export function transformData(
               } else {
                 newData = { ...newData, [columnMapping[column]]: data[column] };
               }
-            } else if (data[column] && !columnMapping[column]) {
+            } else if (data[column] !== null && !columnMapping[column]) {
               if (columnValueMapping && columnValueMapping[column]) {
                 newData = {
                   ...newData,

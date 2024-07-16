@@ -1,43 +1,69 @@
 import { Link, useLocation } from "react-router-dom";
 import Navbar from "./Navbar";
+import { useDispatch, useSelector } from "react-redux";
+import { updateModalInfo, updateLoading } from "../features/generalSlice";
+import Modal from "./Modal";
+import ProjectForm from "./ProjectForm";
+import Toast from "./Toast";
+import { useEffect, useState } from "react";
+import useServiceOperation from "../hooks/useServiceOperation";
+import { getProjects } from "../services/user/project";
+import { userProjectMapping } from "../helpers/tableColumnMapping";
+import Loader from "./Loader";
 
 export default function UserSideBar() {
   const location = useLocation();
+  const generalData = useSelector((state) => state.general);
+  const { modalInfo, toastInfo, isLoading, error } = generalData;
+  const dispatch = useDispatch();
 
-  const projects = [
-    {
-      id: 1,
-      user_id: 6,
-      title: "Health and Wellness Management System",
-      description:
-        "This is a updated desription of Health and Wellness Management System",
-      created_at: "2024-07-08 19:53:21",
-      updated_at: "2024-07-09 09:53:32",
-      deleted_at: null,
-    },
-    {
-      id: 2,
-      user_id: 6,
-      title: "Inventory Management system",
-      description:
-        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Illo facilis tempore, deleniti dignissimos quis veritatis, repudiandae doloremque qui nisi debitis neque earum, quae veniam voluptatum aut ea saepe cupiditate quia molestias corrupti ratione. Vitae.",
-      created_at: "2024-07-09 10:16:20",
-      updated_at: "2024-07-15 17:12:01",
-      deleted_at: null,
-    },
-    {
-      id: 3,
-      user_id: 4,
-      title: "Personal Finance Tracker",
-      description: "This is a desription of Personal Finance Tracker",
-      created_at: "2024-07-09 17:19:18",
-      updated_at: "2024-07-09 17:19:18",
-      deleted_at: null,
-    },
-  ];
+  const { getData } = useServiceOperation();
+
+  const [projects, setProjects] = useState({
+    originalData: [],
+    transformData: [],
+  });
+
+  useEffect(() => {
+    dispatch(
+      updateLoading({
+        isLoading: true,
+        error: null,
+      })
+    );
+    getData(getProjects, userProjectMapping, null, null, setProjects, null);
+  }, []);
 
   return (
     <>
+      <Toast
+        toastId="userToast"
+        isShow={toastInfo.isShow}
+        type={toastInfo.type}
+        message={toastInfo.message}
+      />
+      <Modal
+        isModalOpen={modalInfo.isModalOpen}
+        modalTitle={modalInfo.toBeUpdate ? "Update Project" : "Add Project"}
+        renderModalBody={() => {
+          return (
+            <ProjectForm
+              isModalOpen={modalInfo.isModalOpen}
+              data={modalInfo.toBeUpdate}
+              getData={async () => {
+                await getData(
+                  getProjects,
+                  userProjectMapping,
+                  null,
+                  null,
+                  setProjects,
+                  null
+                );
+              }}
+            />
+          );
+        }}
+      />
       <Navbar />
       <aside
         id="logo-sidebar"
@@ -61,41 +87,72 @@ export default function UserSideBar() {
                 </svg>
                 <span className="flex-1 ms-3 whitespace-nowrap">Projects</span>
                 <svg
-                  class="w-6 h-6 text-gray-800 dark:text-white"
+                  className="w-6 h-6 text-gray-800 dark:text-white cursor-pointer"
                   aria-hidden="true"
                   xmlns="http://www.w3.org/2000/svg"
                   width="24"
                   height="24"
                   fill="none"
                   viewBox="0 0 24 24"
+                  onClick={() => {
+                    dispatch(
+                      updateModalInfo({
+                        isModalOpen: true,
+                        toBeUpdate: null,
+                      })
+                    );
+                  }}
                 >
                   <path
                     stroke="currentColor"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
                     d="M5 12h14m-7 7V5"
                   />
                 </svg>
               </div>
             </li>
 
-            {projects.map((project) => {
-              return (
-                <li>
-                  <Link
-                    to="/"
+            {isLoading ? (
+              <Loader
+                className={
+                  "flex items-center justify-center w-full rounded-lg p-5"
+                }
+              />
+            ) : (
+              (projects?.transformData?.length === 0 && (
+                <li key={"noProjectFound"}>
+                  <div
                     className={`flex items-center text-sm p-1 text-gray-900 rounded-lg dark:text-white  ${
                       location.pathname === "/admin/dashboard"
                         ? "bg-gray-700"
                         : ""
                     } dark:hover:bg-gray-700 group`}
                   >
-                    <span className="ms-3">{project.title}</span>
-                  </Link>
+                    <span className="ms-3">No Project Found</span>
+                  </div>
                 </li>
-              );
-            })}
+              )) ||
+              (projects?.transformData?.length > 0 &&
+                projects?.transformData?.map((project) => {
+                  return (
+                    <li key={project.Id}>
+                      <Link
+                        to={`/project/${project.ProjectUniqueId}`}
+                        className={`flex items-center text-sm p-1 text-gray-900 rounded-lg dark:text-white  ${
+                          location.pathname ===
+                          `/project/${project.ProjectUniqueId}`
+                            ? "bg-gray-700"
+                            : ""
+                        } dark:hover:bg-gray-700 group`}
+                      >
+                        <span className="ms-3">{project.Title}</span>
+                      </Link>
+                    </li>
+                  );
+                }))
+            )}
           </ul>
         </div>
       </aside>

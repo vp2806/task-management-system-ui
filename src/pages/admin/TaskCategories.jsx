@@ -16,6 +16,7 @@ import { useDebouncedValue } from "../../hooks/useDebounce";
 import { taskCategoryMapping } from "../../helpers/tableColumnMapping";
 import Modal from "../../components/Modal";
 import useServiceOperation from "../../hooks/useServiceOperation";
+import TaskCategoryForm from "../../components/TaskCategoryForm";
 
 export default function TaskCategories() {
   const generalData = useSelector((state) => state.general);
@@ -205,17 +206,27 @@ export default function TaskCategories() {
         modalTitle={toBeUpdate ? "Update Task Category" : "Add Task Category"}
         data={toBeUpdate}
         setToBeUpdate={setToBeUpdate}
-        setlimitOfData={setlimitOfData}
-        setPageNumber={setPageNumber}
-        recordPerPage={recordPerPage}
-        getData={async () => {
-          await getData(
-            getTaskCategories,
-            taskCategoryMapping,
-            ActionElements,
-            limitOfData,
-            setTaskCategories,
-            null
+        renderModalBody={() => {
+          return (
+            <TaskCategoryForm
+              isModalOpen={isModalOpen}
+              setIsModalOpen={setIsModalOpen}
+              data={toBeUpdate}
+              setlimitOfData={setlimitOfData}
+              setPageNumber={setPageNumber}
+              recordPerPage={recordPerPage}
+              getData={async () => {
+                await getData(
+                  getTaskCategories,
+                  taskCategoryMapping,
+                  ActionElements,
+                  limitOfData,
+                  setTaskCategories,
+                  null
+                );
+              }}
+              setToBeUpdate={setToBeUpdate}
+            />
           );
         }}
       />
