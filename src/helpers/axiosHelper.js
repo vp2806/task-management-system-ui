@@ -22,7 +22,7 @@ export async function getRequest(url) {
   });
 }
 
-export async function postRequest(url, data, config) {
+export async function postRequest(url, data) {
   return new Promise(async (resolve, reject) => {
     try {
       const response = await axiosInstance.post(url, data);

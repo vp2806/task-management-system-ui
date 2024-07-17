@@ -5,10 +5,11 @@ export default function InputSelect({
   selectClassName,
   selectName,
   selectOptions,
-  isCheck,
   isCompulsory,
   registerInput,
   error,
+  isMultiple,
+  isReadOnly,
 }) {
   function getOptions() {
     const options = selectOptions.map((option, index) => {
@@ -31,6 +32,9 @@ export default function InputSelect({
         className={selectClassName}
         name={selectName}
         {...registerInput(selectName)}
+        multiple={isMultiple ? isMultiple : false}
+        size={0}
+        aria-readonly={isReadOnly}
       >
         <option value="" key="">
           {`Select ${label}`}

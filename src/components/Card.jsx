@@ -1,16 +1,16 @@
-import { Link } from "react-router-dom";
-
-export default function Card({ title, description, dueDate }) {
+export default function Card({ title, description, dueDate, onClick }) {
   return (
-    <Link
-      href="/"
-      className="block max-w-sm p-6 mb-3 bg-white border border-gray-200 rounded-lg shado dark:bg-gray-800 dark:border-gray-700"
+    <div
+      className="block max-w-sm p-6 mb-3 bg-white border border-gray-200 rounded-lg shado dark:bg-gray-800 dark:border-gray-700 cursor-pointer"
+      onClick={onClick}
     >
       <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
         {title}
       </h5>
       <p className="font-normal text-gray-700 dark:text-gray-400">
-        {description}
+        {description.length > 170
+          ? description.slice(0, 171) + "..."
+          : description}
       </p>
       <div className="flex items-center gap-3 mt-3">
         <svg
@@ -34,6 +34,6 @@ export default function Card({ title, description, dueDate }) {
           {dueDate}
         </span>
       </div>
-    </Link>
+    </div>
   );
 }

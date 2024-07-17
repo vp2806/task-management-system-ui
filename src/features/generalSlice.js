@@ -14,7 +14,9 @@ const initialState = {
   },
   drawerInfo: {
     isDrawerOpen: false,
+    isView: false,
     toBeUpdate: null,
+    toBeView: null,
   },
 };
 
@@ -35,7 +37,9 @@ const generalSlice = createSlice({
     },
     updateDrawerInfo: (state, action) => {
       state.drawerInfo.isDrawerOpen = action.payload.isDrawerOpen;
+      state.drawerInfo.isView = action.payload.isView;
       state.drawerInfo.toBeUpdate = action.payload.toBeUpdate;
+      state.drawerInfo.toBeView = action.payload.toBeView;
     },
   },
 });

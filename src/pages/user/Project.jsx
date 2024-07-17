@@ -5,6 +5,7 @@ import useServiceOperation from "../../hooks/useServiceOperation";
 import {
   getProjectTasks,
   getTaskCategories,
+  getTaskAssignees,
 } from "../../services/user/projectTask";
 import {
   projectTaskMapping,
@@ -18,6 +19,7 @@ import { updateDrawerInfo, updateLoading } from "../../features/generalSlice";
 import Button from "../../components/Button";
 import Drawer from "../../components/Drawer";
 import ProjectTaskForm from "../../components/ProjectTaskForm";
+import Task from "./Task";
 
 export default function Project() {
   const generalData = useSelector((state) => state.general);
@@ -31,7 +33,8 @@ export default function Project() {
     transformData: [],
   });
 
-  const [taskCategory, setTaskCategory] = useState({});
+  const [taskCategory, setTaskCategory] = useState([]);
+  const [taskAssignees, setTaskAssignees] = useState([]);
 
   const params = useParams();
 
@@ -59,10 +62,20 @@ export default function Project() {
         null,
         setTaskCategory,
         null
-      ).then(async () => {});
+      ).then(async () => {
+        getData(
+          getTaskAssignees,
+          optionsMapping,
+          null,
+          null,
+          setTaskAssignees,
+          null
+        );
+      });
     });
   }, [params.projectId]);
 
+  console.log(projectTasks);
   return (
     <>
       <Toast
@@ -76,24 +89,31 @@ export default function Project() {
           drawerInfo.toBeUpdate ? "Update Project Task" : "Add Project Task"
         }
         renderModalBody={() => {
-          return (
-            <ProjectTaskForm
-              data={drawerInfo.toBeUpdate}
-              taskCategory={taskCategory.transformData}
-              getData={async () => {
-                await getData(
-                  () => {
-                    return getProjectTasks(params.projectId);
-                  },
-                  projectTaskMapping,
-                  null,
-                  null,
-                  setProjectTasks,
-                  null
-                );
-              }}
-            />
-          );
+          if (drawerInfo.isView) {
+            return <Task />;
+          }
+
+          if (drawerInfo.isDrawerOpen && !drawerInfo.isView) {
+            return (
+              <ProjectTaskForm
+                data={drawerInfo.toBeUpdate}
+                taskCategory={taskCategory.transformData}
+                taskAssignees={taskAssignees.transformData}
+                getData={async () => {
+                  await getData(
+                    () => {
+                      return getProjectTasks(params.projectId);
+                    },
+                    projectTaskMapping,
+                    null,
+                    null,
+                    setProjectTasks,
+                    null
+                  );
+                }}
+              />
+            );
+          }
         }}
       />
       <UserSideBar />
@@ -112,15 +132,25 @@ export default function Project() {
 
                 {projectTasks?.transformData
                   ?.filter((task) => {
-                    return task.task_status === 0;
+                    return task.taskStatus === 0;
                   })
-                  .map((task) => {
+                  .map((task, index) => {
                     return (
                       <Card
-                        key={task.Id}
-                        title={task.Title}
-                        description={task.Description}
-                        dueDate={task["Due Date"]}
+                        key={task.id}
+                        title={task.title}
+                        description={task.description}
+                        dueDate={task.dueDate}
+                        onClick={() => {
+                          dispatch(
+                            updateDrawerInfo({
+                              isDrawerOpen: true,
+                              isView: true,
+                              toBeUpdate: null,
+                              toBeView: task,
+                            })
+                          );
+                        }}
                       />
                     );
                   })}
@@ -131,7 +161,9 @@ export default function Project() {
                     dispatch(
                       updateDrawerInfo({
                         isDrawerOpen: true,
+                        isView: false,
                         toBeUpdate: null,
+                        toBeView: null,
                       })
                     );
                   }}
@@ -144,15 +176,25 @@ export default function Project() {
 
                 {projectTasks?.transformData
                   ?.filter((task) => {
-                    return task.task_status === 1;
+                    return task.taskStatus === 1;
                   })
                   .map((task) => {
                     return (
                       <Card
-                        key={task.Id}
-                        title={task.Title}
-                        description={task.Description}
-                        dueDate={task["Due Date"]}
+                        key={task.id}
+                        title={task.title}
+                        description={task.description}
+                        dueDate={task.dueDate}
+                        onClick={() => {
+                          dispatch(
+                            updateDrawerInfo({
+                              isDrawerOpen: true,
+                              isView: true,
+                              toBeUpdate: null,
+                              toBeView: task,
+                            })
+                          );
+                        }}
                       />
                     );
                   })}
@@ -164,7 +206,9 @@ export default function Project() {
                     dispatch(
                       updateDrawerInfo({
                         isDrawerOpen: true,
+                        isView: false,
                         toBeUpdate: null,
+                        toBeView: null,
                       })
                     );
                   }}
@@ -177,15 +221,25 @@ export default function Project() {
 
                 {projectTasks?.transformData
                   ?.filter((task) => {
-                    return task.task_status === 2;
+                    return task.taskStatus === 2;
                   })
                   .map((task) => {
                     return (
                       <Card
-                        key={task.Id}
-                        title={task.Title}
-                        description={task.Description}
-                        dueDate={task["Due Date"]}
+                        key={task.id}
+                        title={task.title}
+                        description={task.description}
+                        dueDate={task.dueDate}
+                        onClick={() => {
+                          dispatch(
+                            updateDrawerInfo({
+                              isDrawerOpen: true,
+                              isView: true,
+                              toBeUpdate: null,
+                              toBeView: task,
+                            })
+                          );
+                        }}
                       />
                     );
                   })}
@@ -197,7 +251,9 @@ export default function Project() {
                     dispatch(
                       updateDrawerInfo({
                         isDrawerOpen: true,
+                        isView: false,
                         toBeUpdate: null,
+                        toBeView: null,
                       })
                     );
                   }}

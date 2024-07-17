@@ -2,7 +2,6 @@ import {
   Dialog,
   DialogBackdrop,
   DialogPanel,
-  DialogTitle,
   TransitionChild,
 } from "@headlessui/react";
 import { useDispatch, useSelector } from "react-redux";
@@ -20,11 +19,13 @@ export default function Drawer({ drawerTitle, renderModalBody }) {
         dispatch(
           updateDrawerInfo({
             isDrawerOpen: false,
+            isView: false,
             toBeUpdate: null,
+            toBeView: null,
           })
         );
       }}
-      className="relative z-50"
+      className="relative z-[48]"
     >
       <DialogBackdrop
         transition
@@ -46,7 +47,9 @@ export default function Drawer({ drawerTitle, renderModalBody }) {
                       dispatch(
                         updateDrawerInfo({
                           isDrawerOpen: false,
+                          isView: false,
                           toBeUpdate: null,
+                          toBeView: null,
                         })
                       )
                     }

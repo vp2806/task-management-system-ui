@@ -18,6 +18,7 @@ export default function Input({
   isAccept,
   registerInput,
   list,
+  isMultiple,
 }) {
   return (
     <div className={parentClassName}>
@@ -46,6 +47,7 @@ export default function Input({
         accept={isAccept ? isAccept : ""}
         {...registerInput(inputName)}
         list={list ? list : ""}
+        multiple={isMultiple ? isMultiple : false}
       />
       {error && <span className="text-red-600">{error}</span>}
     </div>

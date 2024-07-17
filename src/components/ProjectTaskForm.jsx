@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
-import { updateModalInfo, updateToast } from "../features/generalSlice";
+import { updateDrawerInfo, updateToast } from "../features/generalSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { taskSchema } from "../validations/taskValidation";
 import {
@@ -10,12 +10,18 @@ import {
 } from "../services/user/projectTask";
 import Input from "./Input";
 import InputSelect from "./Select";
-import DataList from "./DataList";
+import { useParams } from "react-router-dom";
 
-export default function ProjectTaskForm({ data, getData, taskCategory }) {
+export default function ProjectTaskForm({
+  data,
+  getData,
+  taskCategory,
+  taskAssignees,
+}) {
   const generalData = useSelector((state) => state.general);
-  const { modalInfo, drawerInfo } = generalData;
+  const { drawerInfo } = generalData;
   const dispatch = useDispatch();
+  const params = useParams();
 
   const {
     register,
@@ -27,6 +33,7 @@ export default function ProjectTaskForm({ data, getData, taskCategory }) {
   });
 
   useEffect(() => {
+    console.log(data, "called");
     if (data) {
       reset({ ...data });
     } else {
@@ -44,10 +51,26 @@ export default function ProjectTaskForm({ data, getData, taskCategory }) {
 
   const submitData = async (projectPayLoad) => {
     let response = null;
+    const formData = new FormData();
+    Object.keys(projectPayLoad).forEach((key) => {
+      if (key === "assigneeName") {
+        formData.append(key, JSON.stringify(projectPayLoad[key]));
+      } else if (key === "taskDocument") {
+        const files = [...projectPayLoad[key]];
+        files.forEach((file) => {
+          formData.append(key, file);
+        });
+      } else {
+        formData.append(key, projectPayLoad[key]);
+      }
+    });
+
+    formData.append("projectId", params.projectId);
+
     if (!data) {
-      response = await addProjectTask(projectPayLoad);
+      response = await addProjectTask(formData);
     } else {
-      response = await updateProjectTask(projectPayLoad, data.id);
+      response = await updateProjectTask(formData, data.id);
     }
 
     if (
@@ -62,7 +85,12 @@ export default function ProjectTaskForm({ data, getData, taskCategory }) {
         })
       );
 
-      dispatch(updateModalInfo({ isModalOpen: false, toBeUpdate: null }));
+      updateDrawerInfo({
+        isDrawerOpen: false,
+        isView: false,
+        toBeUpdate: null,
+        toBeView: null,
+      });
 
       if (getData) {
         await getData();
@@ -96,8 +124,6 @@ export default function ProjectTaskForm({ data, getData, taskCategory }) {
       }, 4000);
     }
   };
-
-  console.log(errors);
 
   return (
     <form className="space-y-6" onSubmit={handleSubmit(submitData)}>
@@ -162,29 +188,31 @@ export default function ProjectTaskForm({ data, getData, taskCategory }) {
         isCompulsory={true}
         isOnClick={true}
       />
-      <Input
-        parentClassName="mt-2"
-        inputType="text"
-        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 require"
-        inputId="assigneeName"
-        inputName="assigneeName"
-        list="assigneeNames"
+      <InputSelect
+        selectClassName="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 require"
+        selectName="assigneeName"
         labelClassName="block mb-2 text-sm font-medium text-gray-900"
-        label="Assignee Name"
-        error={errors?.assigneeName?.message}
-        registerInput={register}
+        label="Assignee"
+        selectOptions={taskAssignees}
+        error={
+          errors?.assigneeName?.message ||
+          errors?.assigneeName?.assigneeName?.message
+        }
         isCompulsory={true}
-      />
-      <DataList
-        datalistId="assigneeNames"
-        datalistOptions={[{ value: "Vivek" }]}
+        registerInput={register}
+        isMultiple={true}
+        isReadOnly={drawerInfo.toBeUpdate ? true : false}
       />
       <InputSelect
         selectClassName="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 require"
         selectName="priorityLevel"
         labelClassName="block mb-2 text-sm font-medium text-gray-900"
         label="Priority Level"
-        selectOptions={[{ key: "Select Priority Level", value: "" }]}
+        selectOptions={[
+          { value: "Low" },
+          { value: "Medium" },
+          { value: "High" },
+        ]}
         error={errors?.priorityLevel?.message}
         isCompulsory={true}
         registerInput={register}
@@ -197,9 +225,13 @@ export default function ProjectTaskForm({ data, getData, taskCategory }) {
         inputName="taskDocument"
         labelClassName="block mb-2 text-sm font-medium text-gray-900"
         label="Document"
-        error={errors?.taskDocument?.message}
+        error={
+          errors?.taskDocument?.message ||
+          errors?.taskDocument?.taskDocument?.message
+        }
         registerInput={register}
         isAccept={".jpg, .jpeg, .png, .pdf, .mp4"}
+        isMultiple={true}
       />
 
       <input

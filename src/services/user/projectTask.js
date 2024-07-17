@@ -60,3 +60,16 @@ export async function getTaskCategories() {
     return error?.response?.data?.message || error.message;
   }
 }
+
+export async function getTaskAssignees() {
+  try {
+    const response = await getRequest("/get-task-assignees");
+    if (response.data.response_type !== "error") {
+      return response.data.data;
+    }
+    return response.data.message;
+  } catch (error) {
+    console.error("Error while fetching user task categories", error);
+    return error?.response?.data?.message || error.message;
+  }
+}
