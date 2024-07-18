@@ -6,12 +6,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { taskSchema, updateTaskSchema } from "../validations/taskValidation";
 import {
   addProjectTask,
+  deleteTaskDocument,
   updateProjectTask,
 } from "../services/user/projectTask";
 import Input from "./Input";
 import InputSelect from "./Select";
 import { useParams } from "react-router-dom";
 import { priorityLevelOptions, taskStatusOptions } from "../helpers/data";
+import useServiceOperation from "../hooks/useServiceOperation";
 
 export default function ProjectTaskForm({
   data,
@@ -23,6 +25,7 @@ export default function ProjectTaskForm({
   const { drawerInfo } = generalData;
   const dispatch = useDispatch();
   const params = useParams();
+  const { handleDelete } = useServiceOperation();
 
   const {
     register,
@@ -247,7 +250,82 @@ export default function ProjectTaskForm({
         isAccept={".jpg, .jpeg, .png, .pdf, .mp4"}
         isMultiple={true}
       />
+      {console.log(drawerInfo?.toBeView, ">>>>")}
+      {drawerInfo.toBeUpdate && (
+        <>
+          {drawerInfo?.toBeUpdate?.taskDocuments.map((document) => {
+            if (document.document_type === 0) {
+              return (
+                <div className="flex justify-end items-start">
+                  <img
+                    key={document.id}
+                    src={document.document_url}
+                    alt="Task Image"
+                    className="max-w-[650px] max-h-[300px] object-cover rounded-lg ml-auto mr-auto mb-20"
+                  ></img>
+                  <svg
+                    class="w-6 h-6 text-gray-800 cursor-pointer"
+                    aria-hidden="true"
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    onClick={() => {
+                      handleDelete(
+                        deleteTaskDocument,
+                        document.id,
+                        null,
+                        null,
+                        null
+                      );
+                    }}
+                  >
+                    <path
+                      stroke="currentColor"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M6 18 17.94 6M18 18 6.06 6"
+                    />
+                  </svg>
+                </div>
+              );
+            }
 
+            if (document.document_type === 1) {
+              return (
+                <div
+                  className="flex flex-col items-center justify-center mb-20"
+                  key={document.id}
+                >
+                  <div className="w-[650px] h-[370px] object-cover rounded-lg ml-auto mr-auto">
+                    <video className="w-full h-full" controls>
+                      <source src={document.document_url} type="video/mp4" />
+                    </video>
+                  </div>
+                </div>
+              );
+            }
+
+            if (document.document_type === 2) {
+              return (
+                <div
+                  className="flex flex-col items-center justify-center mb-20"
+                  key={document.id}
+                >
+                  <div className="w-[650px] h-[500px] object-cover rounded-lg ml-auto mr-auto">
+                    <iframe
+                      src={document.document_url}
+                      className="w-full h-full"
+                    ></iframe>
+                  </div>
+                </div>
+              );
+            }
+          })}
+        </>
+      )}
       <input
         type="submit"
         value={data ? "Update Task" : "Add Task"}

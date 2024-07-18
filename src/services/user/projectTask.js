@@ -73,3 +73,15 @@ export async function getTaskAssignees() {
     return error?.response?.data?.message || error.message;
   }
 }
+
+export async function deleteTaskDocument(projectTaskDocumentId) {
+  try {
+    const response = await deleteRequest(
+      `/delete-task-document/${projectTaskDocumentId}`
+    );
+    return response;
+  } catch (error) {
+    console.error("Error while deleting project task document", error);
+    return error?.response?.data?.message || error.message;
+  }
+}

@@ -53,6 +53,7 @@ export default function Task({ getData }) {
                           : drawerInfo?.toBeView?.taskStatus === 1
                           ? "In Progress"
                           : "Done",
+                      taskDocuments: drawerInfo?.toBeView?.taskDocuments,
                     },
                     toBeView: null,
                   })
