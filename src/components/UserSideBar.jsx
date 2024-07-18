@@ -84,6 +84,7 @@ export default function UserSideBar() {
         }}
       />
       <Navbar />
+
       <aside
         id="logo-sidebar"
         className="fixed top-0 left-0 z-30 w-72 h-screen pt-20 transition-transform -translate-x-full bg-white border-r border-gray-200 sm:translate-x-0 dark:bg-gray-800 dark:border-gray-700"
@@ -208,7 +209,7 @@ export default function UserSideBar() {
               (projects?.transformData?.length > 0 &&
                 projects?.transformData?.map((project) => {
                   return (
-                    <li key={project.Id}>
+                    <li key={project.ProjectUniqueId}>
                       <Link
                         to={`/project/${project.ProjectUniqueId}`}
                         className={`flex items-center text-sm p-1 text-gray-900 rounded-lg dark:text-white  ${
@@ -227,6 +228,7 @@ export default function UserSideBar() {
           </ul>
         </div>
       </aside>
+
       {isLoading ? (
         <Loader
           className={"flex items-center justify-center w-full rounded-lg p-5"}

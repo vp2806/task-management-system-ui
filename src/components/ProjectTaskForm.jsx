@@ -11,6 +11,7 @@ import {
 import Input from "./Input";
 import InputSelect from "./Select";
 import { useParams } from "react-router-dom";
+import { priorityLevelOptions, taskStatusOptions } from "../helpers/data";
 
 export default function ProjectTaskForm({
   data,
@@ -211,11 +212,7 @@ export default function ProjectTaskForm({
         selectName="priorityLevel"
         labelClassName="block mb-2 text-sm font-medium text-gray-900"
         label="Priority Level"
-        selectOptions={[
-          { value: "Low" },
-          { value: "Medium" },
-          { value: "High" },
-        ]}
+        selectOptions={priorityLevelOptions}
         error={errors?.priorityLevel?.message}
         isCompulsory={true}
         registerInput={register}
@@ -227,11 +224,7 @@ export default function ProjectTaskForm({
           selectName="taskStatus"
           labelClassName="block mb-2 text-sm font-medium text-gray-900"
           label="Task Status"
-          selectOptions={[
-            { value: "To Do" },
-            { value: "In Progress" },
-            { value: "Done" },
-          ]}
+          selectOptions={taskStatusOptions}
           error={errors?.taskStatus?.message}
           isCompulsory={true}
           registerInput={register}

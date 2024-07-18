@@ -38,6 +38,12 @@ export const userProjectMapping = {
 
 export const projectTaskMapping = {};
 
+export const projectTaskValueMapping = {
+  Low: 0,
+  Medium: 1,
+  High: 2,
+};
+
 export const optionsMapping = {
   category_name: "value",
   assignee_name: "value",

@@ -9,7 +9,7 @@ export default function InputSelect({
   registerInput,
   error,
   isMultiple,
-  isReadOnly,
+  handleChange,
 }) {
   function getOptions() {
     const options = selectOptions.map((option, index) => {
@@ -24,20 +24,22 @@ export default function InputSelect({
 
   return (
     <div>
-      <label htmlFor="countries" className={labelClassName}>
-        {label} {isCompulsory && <span className="text-red-600">*</span>}
-      </label>
+      {label && (
+        <label htmlFor="countries" className={labelClassName}>
+          {label} {isCompulsory && <span className="text-red-600">*</span>}
+        </label>
+      )}
+
       <select
         id={selectId}
         className={selectClassName}
         name={selectName}
+        onChange={handleChange}
         {...registerInput(selectName)}
         multiple={isMultiple ? isMultiple : false}
-        size={0}
-        aria-readonly={isReadOnly}
       >
         <option value="" key="">
-          {`Select ${label}`}
+          {`${label ? "Search " + label : "Filter Task By"}`}
         </option>
         {getOptions()}
       </select>
