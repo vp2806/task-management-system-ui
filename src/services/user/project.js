@@ -20,7 +20,7 @@ export async function getProjects() {
 
 export async function deleteProject(projectId) {
   try {
-    const response = await deleteRequest(`/delete-projecty/${projectId}`);
+    const response = await deleteRequest(`/delete-project/${projectId}`);
     return response;
   } catch (error) {
     console.error("Error while deleting project", error);

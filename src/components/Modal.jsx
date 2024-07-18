@@ -25,7 +25,9 @@ export default function Modal({
       }
       return;
     }
-    dispatch(updateModalInfo({ isModalOpen: false, toBeUpdate: null }));
+    dispatch(
+      updateModalInfo({ isModalOpen: false, modalBody: null, toBeUpdate: null })
+    );
   };
 
   return (

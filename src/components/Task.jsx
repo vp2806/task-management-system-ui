@@ -1,10 +1,14 @@
 import { useDispatch, useSelector } from "react-redux";
-import { updateDrawerInfo } from "../../features/generalSlice";
+import { updateDrawerInfo } from "../features/generalSlice";
+import useServiceOperation from "../hooks/useServiceOperation";
+import { deleteTask } from "../services/user/projectTask";
 
-export default function Task() {
+export default function Task({ getData }) {
   const generalData = useSelector((state) => state.general);
   const { drawerInfo } = generalData;
   const dispatch = useDispatch();
+
+  const { handleDelete } = useServiceOperation();
 
   return (
     <>
@@ -27,7 +31,29 @@ export default function Task() {
                   updateDrawerInfo({
                     isDrawerOpen: true,
                     isView: false,
-                    toBeUpdate: drawerInfo?.toBeView,
+                    toBeUpdate: {
+                      id: drawerInfo?.toBeView?.id,
+                      taskCategory: drawerInfo?.toBeView?.taskCategory,
+                      title: drawerInfo?.toBeView?.title,
+                      description: drawerInfo?.toBeView?.description,
+                      dueDate: drawerInfo?.toBeView?.dueDate.split(" ")[0],
+                      dueTime: drawerInfo?.toBeView?.dueDate
+                        .split(" ")
+                        .pop()
+                        .slice(0, 5),
+                      priorityLevel:
+                        drawerInfo?.toBeView?.priorityLevel === 0
+                          ? "Low"
+                          : drawerInfo?.toBeView?.priorityLevel === 1
+                          ? "Medium"
+                          : "High",
+                      taskStatus:
+                        drawerInfo?.toBeView?.taskStatus === 0
+                          ? "To Do"
+                          : drawerInfo?.toBeView?.taskStatus === 1
+                          ? "In Progress"
+                          : "Done",
+                    },
                     toBeView: null,
                   })
                 );
@@ -52,6 +78,27 @@ export default function Task() {
               height="24"
               fill="currentColor"
               viewBox="0 0 24 24"
+              onClick={() => {
+                handleDelete(
+                  deleteTask,
+                  drawerInfo?.toBeView?.id,
+                  null,
+                  null,
+                  null
+                ).then(async (response) => {
+                  if (response) {
+                    dispatch(
+                      updateDrawerInfo({
+                        isDrawerOpen: false,
+                        isView: false,
+                        toBeUpdate: null,
+                        toBeView: null,
+                      })
+                    );
+                    await getData();
+                  }
+                });
+              }}
             >
               <path
                 fillRule="evenodd"
@@ -102,6 +149,7 @@ export default function Task() {
           </svg>
           <span>{drawerInfo?.toBeView?.dueDate}</span>
         </div>
+
         <div className="font-normal text-gray-700 dark:text-gray-800 text-justify mt-5">
           Status:{" "}
           <span className="font-bold">
@@ -112,6 +160,7 @@ export default function Task() {
               : "Done"}
           </span>
         </div>
+
         <div className="font-normal text-gray-700 dark:text-gray-800 text-justify mt-5">
           Priority Level:{" "}
           <span className="font-bold">
@@ -136,18 +185,21 @@ export default function Task() {
             );
           })}
         </div>
+
         <div className="font-normal text-gray-700 dark:text-gray-800 mt-5">
           Created At:{" "}
           <span className="font-bold bg-blue-100 text-blue-800 text-sm me-2 px-3.5 py-1.5 rounded-full">
             {drawerInfo?.toBeView?.createdAt}
           </span>
         </div>
+
         <div className="font-normal text-gray-700 dark:text-gray-800 mt-5">
           Updated At:{" "}
           <span className="font-bold  bg-blue-100 text-blue-800 text-sm me-2 px-3.5 py-1.5 rounded-full">
             {drawerInfo?.toBeView?.updatedAt}
           </span>
         </div>
+
         <div className="font-normal text-gray-700 dark:text-gray-800 text-justify mt-5">
           {drawerInfo?.toBeView?.description}
         </div>
@@ -159,7 +211,7 @@ export default function Task() {
               key={document.id}
               src={document.document_url}
               alt="Task Image"
-              className="w-[650px] h-[300px] object-cover rounded-lg ml-auto mr-auto mb-20"
+              className="max-w-[650px] max-h-[300px] object-cover rounded-lg ml-auto mr-auto mb-20"
             />
           );
         }

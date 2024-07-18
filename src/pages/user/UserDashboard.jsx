@@ -1,74 +1,79 @@
-import { useState } from "react";
+import { useSelector } from "react-redux";
 import UserSideBar from "../../components/UserSideBar";
-import {
-  Dialog,
-  DialogBackdrop,
-  DialogPanel,
-  DialogTitle,
-  TransitionChild,
-} from "@headlessui/react";
+import Loader from "../../components/Loader";
 
 export default function UserDashboard() {
-  const [open, setOpen] = useState(true);
+  const generalData = useSelector((state) => state.general);
+  const { isLoading } = generalData;
 
   return (
     <>
       <UserSideBar />
-      {/* <Dialog open={open} onClose={setOpen} className="relative z-50">
-        <DialogBackdrop
-          transition
-          className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity duration-500 ease-in-out data-[closed]:opacity-0"
-        />
-
-        <div className="fixed inset-0 overflow-hidden">
-          <div className="absolute inset-0 overflow-hidden">
-            <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
-              <DialogPanel
-                transition
-                className="pointer-events-auto relative w-screen max-w-[650px] transform transition duration-500 ease-in-out data-[closed]:translate-x-full sm:duration-700"
-              >
-                <TransitionChild>
-                  <div className="absolute left-0 top-0 -ml-8 flex pr-2 pt-4 duration-500 ease-in-out data-[closed]:opacity-0 sm:-ml-10 sm:pr-4">
-                    <button
-                      type="button"
-                      onClick={() => setOpen(false)}
-                      className="relative rounded-md text-gray-300 hover:text-white focus:outline-none focus:ring-2 focus:ring-white"
-                    >
-                      <span className="absolute -inset-2.5" />
-                      <span className="sr-only">Close panel</span>
-                      <svg
-                        className="w-6 h-6 text-gray-800 dark:text-white"
-                        aria-hidden="true"
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="24"
-                        height="24"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          stroke="currentColor"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M6 18 17.94 6M18 18 6.06 6"
-                        />
-                      </svg>
-                    </button>
-                  </div>
-                </TransitionChild>
-                <div className="flex h-full flex-col overflow-y-scroll bg-white py-6 shadow-xl">
-                  <div className="px-4 sm:px-6">
-                    <DialogTitle className="text-base font-semibold leading-6 text-gray-900">
-                      Panel title
-                    </DialogTitle>
-                  </div>
-                  <div className="relative mt-6 flex-1 px-4 sm:px-6"></div>
-                </div>
-              </DialogPanel>
+      {isLoading ? (
+        <Loader />
+      ) : (
+        <div className="pt-16 px-16 mt-12 sm:ml-72">
+          <div className="block w-full p-6 mb-10 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100">
+            <div className="flex justify-between items-center mb-2">
+              <h5 className="text-2xl font-bold tracking-tight text-gray-900">
+                Project Title | Sample Project
+              </h5>
+              <div className="flex justify-end items-center">
+                <svg
+                  className="w-8 h-8 text-gray-800"
+                  aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M11.32 6.176H5c-1.105 0-2 .949-2 2.118v10.588C3 20.052 3.895 21 5 21h11c1.105 0 2-.948 2-2.118v-7.75l-3.914 4.144A2.46 2.46 0 0 1 12.81 16l-2.681.568c-1.75.37-3.292-1.263-2.942-3.115l.536-2.839c.097-.512.335-.983.684-1.352l2.914-3.086Z"
+                    clipRule="evenodd"
+                  />
+                  <path
+                    fillRule="evenodd"
+                    d="M19.846 4.318a2.148 2.148 0 0 0-.437-.692 2.014 2.014 0 0 0-.654-.463 1.92 1.92 0 0 0-1.544 0 2.014 2.014 0 0 0-.654.463l-.546.578 2.852 3.02.546-.579a2.14 2.14 0 0 0 .437-.692 2.244 2.244 0 0 0 0-1.635ZM17.45 8.721 14.597 5.7 9.82 10.76a.54.54 0 0 0-.137.27l-.536 2.84c-.07.37.239.696.588.622l2.682-.567a.492.492 0 0 0 .255-.145l4.778-5.06Z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+                <svg
+                  className="w-8 h-8 text-gray-800"
+                  aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M8.586 2.586A2 2 0 0 1 10 2h4a2 2 0 0 1 2 2v2h3a1 1 0 1 1 0 2v12a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V8a1 1 0 0 1 0-2h3V4a2 2 0 0 1 .586-1.414ZM10 6h4V4h-4v2Zm1 4a1 1 0 1 0-2 0v8a1 1 0 1 0 2 0v-8Zm4 0a1 1 0 1 0-2 0v8a1 1 0 1 0 2 0v-8Z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </div>
             </div>
+
+            <p className="font-normal mb-2 text-gray-700 ">
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Adipisci,
+              repellat assumenda soluta mollitia inventore, impedit vero
+              voluptate expedita, praesentium qui asperiores obcaecati quam.
+              Odit temporibus doloribus ad eveniet, ab repellendus commodi impe.
+            </p>
+            <p className="font-normal mb-2 text-gray-700 ">
+              <span>Created At: {""}</span>
+              <span className="font-bold">{new Date().toLocaleString()}</span>
+            </p>
+            <p className="font-normal mb-2 text-gray-700 ">
+              <span>Updated At: {""}</span>
+              <span className="font-bold">{new Date().toLocaleString()}</span>
+            </p>
           </div>
         </div>
-      </Dialog> */}
+      )}
     </>
   );
 }

@@ -124,9 +124,18 @@ const taskSchema = z.object({
     .optional(),
 });
 
-const updateTaskSchema = taskSchema.omit({
-  assigneeName: true,
-});
+const updateTaskSchema = taskSchema
+  .omit({
+    assigneeName: true,
+  })
+  .extend({
+    taskStatus: z
+      .string({
+        required_error: "This is Required",
+      })
+      .trim()
+      .min(1, "Task Status can't be empty"),
+  });
 
 const taskCommentSchema = z.object({
   taskId: z

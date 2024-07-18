@@ -10,6 +10,7 @@ const initialState = {
   error: null,
   modalInfo: {
     isModalOpen: false,
+    modalBody: null,
     toBeUpdate: null,
   },
   drawerInfo: {
@@ -33,6 +34,7 @@ const generalSlice = createSlice({
     },
     updateModalInfo: (state, action) => {
       state.modalInfo.isModalOpen = action.payload.isModalOpen;
+      state.modalInfo.modalBody = action.payload.modalBody;
       state.modalInfo.toBeUpdate = action.payload.toBeUpdate;
     },
     updateDrawerInfo: (state, action) => {

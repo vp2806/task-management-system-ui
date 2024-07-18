@@ -19,11 +19,11 @@ import { updateDrawerInfo, updateLoading } from "../../features/generalSlice";
 import Button from "../../components/Button";
 import Drawer from "../../components/Drawer";
 import ProjectTaskForm from "../../components/ProjectTaskForm";
-import Task from "./Task";
+import Task from "../../components/Task";
 
 export default function Project() {
   const generalData = useSelector((state) => state.general);
-  const { toastInfo, isLoading, error, drawerInfo } = generalData;
+  const { toastInfo, isLoading, drawerInfo } = generalData;
   const dispatch = useDispatch();
 
   const { getData } = useServiceOperation();
@@ -75,7 +75,6 @@ export default function Project() {
     });
   }, [params.projectId]);
 
-  console.log(projectTasks);
   return (
     <>
       <Toast
@@ -90,7 +89,22 @@ export default function Project() {
         }
         renderModalBody={() => {
           if (drawerInfo.isView) {
-            return <Task />;
+            return (
+              <Task
+                getData={() => {
+                  getData(
+                    () => {
+                      return getProjectTasks(params.projectId);
+                    },
+                    projectTaskMapping,
+                    null,
+                    null,
+                    setProjectTasks,
+                    null
+                  );
+                }}
+              />
+            );
           }
 
           if (drawerInfo.isDrawerOpen && !drawerInfo.isView) {
@@ -117,7 +131,7 @@ export default function Project() {
         }}
       />
       <UserSideBar />
-      <div className="p-16 mt-20 sm:ml-72">
+      <div className="px-16 sm:ml-72">
         {isLoading ? (
           <Loader
             className={"flex items-center justify-center w-full rounded-lg p-5"}
@@ -134,7 +148,7 @@ export default function Project() {
                   ?.filter((task) => {
                     return task.taskStatus === 0;
                   })
-                  .map((task, index) => {
+                  .map((task) => {
                     return (
                       <Card
                         key={task.id}
@@ -156,7 +170,7 @@ export default function Project() {
                   })}
                 <Button
                   btnText="Add Task"
-                  btnClassName="text-center max-w-sm text-gray-900 bg-gray-300 rounded-lg font-medium text-sm px-5 py-2.5 me-2 mb-7 cursor-pointer"
+                  btnClassName="text-center text-gray-900 bg-gray-300 rounded-lg font-medium text-sm px-5 py-2.5 me-2 mb-7 cursor-pointer"
                   btnOnClick={() => {
                     dispatch(
                       updateDrawerInfo({
@@ -201,7 +215,7 @@ export default function Project() {
 
                 <Button
                   btnText="Add Task"
-                  btnClassName="text-center max-w-sm text-gray-900 bg-gray-300 rounded-lg font-medium text-sm px-5 py-2.5 me-2 mb-7 cursor-pointer"
+                  btnClassName="text-center text-gray-900 bg-gray-300 rounded-lg font-medium text-sm px-5 py-2.5 me-2 mb-7 cursor-pointer"
                   btnOnClick={() => {
                     dispatch(
                       updateDrawerInfo({
@@ -246,7 +260,7 @@ export default function Project() {
 
                 <Button
                   btnText="Add Task"
-                  btnClassName="text-center max-w-sm text-gray-900 bg-gray-300 rounded-lg font-medium text-sm px-5 py-2.5 me-2 mb-7 cursor-pointer"
+                  btnClassName="text-center text-gray-900 bg-gray-300 rounded-lg font-medium text-sm px-5 py-2.5 me-2 mb-7 cursor-pointer"
                   btnOnClick={() => {
                     dispatch(
                       updateDrawerInfo({

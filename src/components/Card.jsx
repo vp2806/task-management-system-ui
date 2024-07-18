@@ -1,7 +1,7 @@
 export default function Card({ title, description, dueDate, onClick }) {
   return (
     <div
-      className="block max-w-sm p-6 mb-3 bg-white border border-gray-200 rounded-lg shado dark:bg-gray-800 dark:border-gray-700 cursor-pointer"
+      className="block p-6 mb-3 bg-white border border-gray-200 rounded-lg shado dark:bg-gray-800 dark:border-gray-700 cursor-pointer"
       onClick={onClick}
     >
       <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">

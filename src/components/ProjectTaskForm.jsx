@@ -1,9 +1,9 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { updateDrawerInfo, updateToast } from "../features/generalSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { taskSchema } from "../validations/taskValidation";
+import { taskSchema, updateTaskSchema } from "../validations/taskValidation";
 import {
   addProjectTask,
   updateProjectTask,
@@ -29,11 +29,10 @@ export default function ProjectTaskForm({
     formState: { errors },
     reset,
   } = useForm({
-    resolver: zodResolver(taskSchema),
+    resolver: zodResolver(data ? updateTaskSchema : taskSchema),
   });
 
   useEffect(() => {
-    console.log(data, "called");
     if (data) {
       reset({ ...data });
     } else {
@@ -66,7 +65,6 @@ export default function ProjectTaskForm({
     });
 
     formData.append("projectId", params.projectId);
-
     if (!data) {
       response = await addProjectTask(formData);
     } else {
@@ -85,12 +83,14 @@ export default function ProjectTaskForm({
         })
       );
 
-      updateDrawerInfo({
-        isDrawerOpen: false,
-        isView: false,
-        toBeUpdate: null,
-        toBeView: null,
-      });
+      dispatch(
+        updateDrawerInfo({
+          isDrawerOpen: false,
+          isView: false,
+          toBeUpdate: null,
+          toBeView: null,
+        })
+      );
 
       if (getData) {
         await getData();
@@ -188,21 +188,24 @@ export default function ProjectTaskForm({
         isCompulsory={true}
         isOnClick={true}
       />
-      <InputSelect
-        selectClassName="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 require"
-        selectName="assigneeName"
-        labelClassName="block mb-2 text-sm font-medium text-gray-900"
-        label="Assignee"
-        selectOptions={taskAssignees}
-        error={
-          errors?.assigneeName?.message ||
-          errors?.assigneeName?.assigneeName?.message
-        }
-        isCompulsory={true}
-        registerInput={register}
-        isMultiple={true}
-        isReadOnly={drawerInfo.toBeUpdate ? true : false}
-      />
+
+      {!drawerInfo.toBeUpdate && (
+        <InputSelect
+          selectClassName="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 require"
+          selectName="assigneeName"
+          labelClassName="block mb-2 text-sm font-medium text-gray-900"
+          label="Assignee"
+          selectOptions={taskAssignees}
+          error={
+            errors?.assigneeName?.message ||
+            errors?.assigneeName?.assigneeName?.message
+          }
+          isCompulsory={true}
+          registerInput={register}
+          isMultiple={true}
+        />
+      )}
+
       <InputSelect
         selectClassName="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 require"
         selectName="priorityLevel"
@@ -217,6 +220,24 @@ export default function ProjectTaskForm({
         isCompulsory={true}
         registerInput={register}
       />
+
+      {drawerInfo.toBeUpdate && (
+        <InputSelect
+          selectClassName="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 require"
+          selectName="taskStatus"
+          labelClassName="block mb-2 text-sm font-medium text-gray-900"
+          label="Task Status"
+          selectOptions={[
+            { value: "To Do" },
+            { value: "In Progress" },
+            { value: "Done" },
+          ]}
+          error={errors?.taskStatus?.message}
+          isCompulsory={true}
+          registerInput={register}
+        />
+      )}
+
       <Input
         parentClassName="mt-4"
         inputType="file"
