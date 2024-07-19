@@ -11,12 +11,13 @@ import { getProjects, deleteProject } from "../services/user/project";
 import { userProjectMapping } from "../helpers/tableColumnMapping";
 import Loader from "./Loader";
 import TaskAssigneeForm from "./TaskAssigneeForm";
+import RegisterUserForm from "./RegisterUserForm";
 
 export default function UserSideBar() {
   const location = useLocation();
   const navigate = useNavigate();
   const generalData = useSelector((state) => state.general);
-  const { modalInfo, toastInfo, isLoading, error } = generalData;
+  const { modalInfo, toastInfo, isLoading } = generalData;
   const dispatch = useDispatch();
   const params = useParams();
 
@@ -51,13 +52,7 @@ export default function UserSideBar() {
       />
       <Modal
         isModalOpen={modalInfo.isModalOpen}
-        modalTitle={
-          modalInfo.modalBody === "Task Assignee"
-            ? "Task Assignee"
-            : modalInfo.toBeUpdate
-            ? "Update Project"
-            : "Add Project"
-        }
+        modalTitle={modalInfo.modalBody}
         renderModalBody={() => {
           if (modalInfo.modalBody === "Project") {
             return (
@@ -80,6 +75,10 @@ export default function UserSideBar() {
 
           if (modalInfo.modalBody === "Task Assignee") {
             return <TaskAssigneeForm />;
+          }
+
+          if (modalInfo.modalBody === "User Profile") {
+            return <RegisterUserForm />;
           }
         }}
       />
@@ -234,7 +233,7 @@ export default function UserSideBar() {
           className={"flex items-center justify-center w-full rounded-lg p-5"}
         />
       ) : projects?.transformData?.length > 0 &&
-        location.pathname !== "/dashboard" ? (
+        location.pathname.startsWith("/project") ? (
         <div className="pt-16 px-16 mt-12 sm:ml-72">
           <div className="block w-full p-6 mb-10 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100">
             <div className="flex justify-between items-center mb-2">

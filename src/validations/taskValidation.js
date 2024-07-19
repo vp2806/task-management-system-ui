@@ -138,13 +138,7 @@ const updateTaskSchema = taskSchema
   });
 
 const taskCommentSchema = z.object({
-  taskId: z
-    .string({
-      required_error: "This is Required",
-    })
-    .trim()
-    .min(1, "Task Id can't be empty"),
-  comment: z
+  taskComment: z
     .string({
       required_error: "This is Required",
     })

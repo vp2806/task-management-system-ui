@@ -12,7 +12,7 @@ import {
   optionsMapping,
   projectTaskValueMapping,
 } from "../../helpers/tableColumnMapping";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import Toast from "../../components/Toast";
 import Loader from "../../components/Loader";
@@ -28,8 +28,9 @@ import { filterByOptions, priorityLevelOptions } from "../../helpers/data";
 
 export default function Project() {
   const generalData = useSelector((state) => state.general);
-  const { toastInfo, isLoading, drawerInfo } = generalData;
+  const { toastInfo, isLoading, drawerInfo, error } = generalData;
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const { getData } = useServiceOperation();
 
@@ -70,24 +71,28 @@ export default function Project() {
       null,
       setProjectTasks,
       null
-    ).then(async () => {
-      getData(
-        getTaskCategories,
-        optionsMapping,
-        null,
-        null,
-        setTaskCategory,
-        null
-      ).then(async () => {
+    ).then(async (response) => {
+      if (!response) {
+        return navigate("/dashboard");
+      } else {
         getData(
-          getTaskAssignees,
+          getTaskCategories,
           optionsMapping,
           null,
           null,
-          setTaskAssignees,
+          setTaskCategory,
           null
-        );
-      });
+        ).then(async () => {
+          getData(
+            getTaskAssignees,
+            optionsMapping,
+            null,
+            null,
+            setTaskAssignees,
+            null
+          );
+        });
+      }
     });
   }, [params.projectId]);
 

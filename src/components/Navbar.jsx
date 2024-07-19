@@ -2,15 +2,28 @@ import { Link, useNavigate } from "react-router-dom";
 import logo from "../assets/task_manager_logo.png";
 import userIcon from "../assets/user_icon.png";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
+import Swal from "../helpers/swal";
 
 export default function Navbar() {
   const navigate = useNavigate();
 
   const logoutUser = () => {
-    localStorage.removeItem("token");
-    navigate("/login");
+    Swal.fire({
+      title: "Are you really want to logout?",
+      text: "",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Logout!",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        navigate("/login");
+      }
+    });
   };
 
+  const userRole = JSON.parse(localStorage.getItem("user"))?.role;
   return (
     <nav className="fixed top-0 z-40 w-full bg-white border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700">
       <div className="px-3 py-3 lg:px-5 lg:pl-3">
@@ -43,7 +56,9 @@ export default function Navbar() {
                 >
                   <MenuItem>
                     <Link
-                      to="/admin/profile"
+                      to={`${
+                        userRole === "Admin" ? "/admin/profile" : "/profile"
+                      } `}
                       className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100 cursor-pointer"
                     >
                       Your Profile

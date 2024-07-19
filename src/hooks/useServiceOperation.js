@@ -55,6 +55,8 @@ export default function useServiceOperation() {
                 error: data,
               })
             );
+            console.log("Called");
+            return resolve(false);
           }
           return resolve(true);
         });

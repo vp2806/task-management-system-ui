@@ -2,6 +2,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { updateDrawerInfo } from "../features/generalSlice";
 import useServiceOperation from "../hooks/useServiceOperation";
 import { deleteTask } from "../services/user/projectTask";
+import Comment from "./Comment";
 
 export default function Task({ getData }) {
   const generalData = useSelector((state) => state.general);
@@ -109,7 +110,6 @@ export default function Task({ getData }) {
             </svg>
           </div>
         </div>
-
         <div className="flex gap-3 font-normal text-gray-700 dark:text-gray-800 mt-5">
           <svg
             className="w-6 h-6 text-gray-800 hover: place"
@@ -129,7 +129,6 @@ export default function Task({ getData }) {
 
           <span>{drawerInfo?.toBeView?.taskCategory}</span>
         </div>
-
         <div className="flex gap-3 font-normal text-gray-700 dark:text-gray-800 mt-5">
           <svg
             className="w-6 h-6text-gray-800"
@@ -186,7 +185,6 @@ export default function Task({ getData }) {
             );
           })}
         </div>
-
         <div className="font-normal text-gray-700 dark:text-gray-800 mt-5">
           Created At:{" "}
           <span className="font-bold bg-blue-100 text-blue-800 text-sm me-2 px-3.5 py-1.5 rounded-full">
@@ -200,6 +198,11 @@ export default function Task({ getData }) {
             {drawerInfo?.toBeView?.updatedAt}
           </span>
         </div>
+
+        <Comment
+          taskId={drawerInfo?.toBeView?.id}
+          taskComment={drawerInfo?.toBeView?.taskComments}
+        />
 
         <div className="font-normal text-gray-700 dark:text-gray-800 text-justify mt-5">
           {drawerInfo?.toBeView?.description}

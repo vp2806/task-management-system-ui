@@ -28,6 +28,13 @@ export default function Login() {
       const userResponse = await postRequest("/login", data);
       if (userResponse.data.response_type !== "error") {
         localStorage.setItem("token", userResponse.data.data.token);
+        localStorage.setItem(
+          "user",
+          JSON.stringify({
+            email: userResponse.data.data.email,
+            role: userResponse.data.data.role,
+          })
+        );
         navigate("/register");
         reset();
       } else {

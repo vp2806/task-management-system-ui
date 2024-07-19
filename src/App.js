@@ -1,38 +1,40 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import ForgotPassword from "./pages/ForgotPassword";
-import SetPasssword from "./pages/SetPasssword";
-import Dashboard from "./pages/admin/Dashboard";
-import Users from "./pages/admin/Users";
-import TaskCategories from "./pages/admin/TaskCategories";
-import Projects from "./pages/admin/Projects";
-import UserDashboard from "./pages/user/UserDashboard";
-import Project from "./pages/user/Project";
+import routes from "./routes/routes";
+import PrivateRoute from "./routes/PrivateRoute";
+import PublicRoute from "./routes/PublicRoute";
+import PageNotFound from "./components/PageNotFound";
 
 function App() {
   return (
     <div className="App">
       <Router>
         <Routes>
-          <Route path="/" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route
-            path="/activate-account/:activateId"
-            element={<SetPasssword />}
-          />
-          <Route
-            path="/reset-password/:setPasswordId"
-            element={<SetPasssword />}
-          />
-          <Route path="/admin/dashboard" element={<Dashboard />} />
-          <Route path="/admin/users" element={<Users />} />
-          <Route path="/admin/task-categories" element={<TaskCategories />} />
-          <Route path="/admin/projects" element={<Projects />} />
-          <Route path="/dashboard" element={<UserDashboard />} />
-          <Route path="/project/:projectId" element={<Project />} />
+          {routes.map((route) => {
+            if (route.isPrivate) {
+              return (
+                <Route
+                  key={route.path}
+                  path={route.path}
+                  element={
+                    <PrivateRoute
+                      element={route.element}
+                      isPrivate={route.isPrivate}
+                      isAdmin={route.isAdmin}
+                    />
+                  }
+                />
+              );
+            } else {
+              return (
+                <Route
+                  key={route.path}
+                  path={route.path}
+                  element={<PublicRoute element={route.element} />}
+                />
+              );
+            }
+          })}
+          <Route path="*" element={<PageNotFound />} />
         </Routes>
       </Router>
     </div>

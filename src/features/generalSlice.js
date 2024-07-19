@@ -29,8 +29,8 @@ const generalSlice = createSlice({
       return (state = { ...state, ["toastInfo"]: action.payload });
     },
     updateLoading: (state, action) => {
-      state.isLoading = action.payload.isLoading;
-      state.error = action.payload.error;
+      state.isLoading = action?.payload?.isLoading;
+      state.error = action?.payload?.error;
     },
     updateModalInfo: (state, action) => {
       state.modalInfo.isModalOpen = action.payload.isModalOpen;

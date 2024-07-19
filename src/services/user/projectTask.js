@@ -85,3 +85,13 @@ export async function deleteTaskDocument(projectTaskDocumentId) {
     return error?.response?.data?.message || error.message;
   }
 }
+
+export async function addProjectTaskComment(data) {
+  try {
+    const response = await postRequest("/create-task-comment", data);
+    return response;
+  } catch (error) {
+    console.error("Error while adding project task comment", error);
+    return error?.response?.data?.message || error.message;
+  }
+}
