@@ -28,7 +28,7 @@ import { filterByOptions, priorityLevelOptions } from "../../helpers/data";
 
 export default function Project() {
   const generalData = useSelector((state) => state.general);
-  const { toastInfo, isLoading, drawerInfo, error } = generalData;
+  const { toastInfo, isLoading, drawerInfo } = generalData;
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
