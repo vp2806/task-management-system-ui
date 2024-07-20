@@ -3,11 +3,12 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { userSchema } from "../validations/userValidation";
 import { useDispatch, useSelector } from "react-redux";
-import { updateToast } from "../features/generalSlice";
-import { postRequest } from "../helpers/axiosHelper";
+import { updateToast, updateModalInfo } from "../features/generalSlice";
 import { useEffect } from "react";
+import { createUserProfile, updateUserProfile } from "../services/userProfile";
+import { updateUser } from "../features/userSlice";
 
-export default function RegisterUserForm({ setAlertModalInfo, data }) {
+export default function RegisterUserForm({ setAlertModalInfo }) {
   const generalData = useSelector((state) => state.general);
   const { modalInfo } = generalData;
   const dispatch = useDispatch();
@@ -35,38 +36,66 @@ export default function RegisterUserForm({ setAlertModalInfo, data }) {
     }
   }, []);
 
-  async function addUser(data) {
-    try {
-      const userResponse = await postRequest("/register", data, {});
-      if (userResponse.data.response_type !== "error") {
+  const submitData = async (userPayLoad) => {
+    let response = null;
+    if (!modalInfo?.toBeUpdate) {
+      response = await createUserProfile(userPayLoad);
+    } else {
+      response = await updateUserProfile(userPayLoad);
+    }
+
+    if (
+      response?.data?.response_type &&
+      response.data.response_type !== "error"
+    ) {
+      if (!modalInfo?.toBeUpdate) {
         setAlertModalInfo({
           isModalOpen: true,
-          buttonLink: `/activate-account/${userResponse.data.data.activationCode}`,
+          buttonLink: `/activate-account/${response.data.data.activationCode}`,
         });
         reset();
       } else {
         dispatch(
           updateToast({
-            type: "error",
-            message: userResponse.data.message,
+            type: "success",
+            message: response.data.message,
             isShow: true,
           })
         );
+
+        dispatch(
+          updateUser({
+            first_name: userPayLoad.firstName,
+            last_name: userPayLoad.lastName,
+            email: userPayLoad.email,
+            dob: userPayLoad.dob,
+            contact_number: userPayLoad.contactNumber,
+          })
+        );
+
+        dispatch(
+          updateModalInfo({
+            isModalOpen: false,
+            modalBody: null,
+            toBeUpdate: null,
+          })
+        );
+
         setTimeout(() => {
           dispatch(
             updateToast({
-              type: "error",
+              type: "success",
               message: null,
               isShow: false,
             })
           );
-        }, 4000);
+        }, 1000);
       }
-    } catch (error) {
+    } else {
       dispatch(
         updateToast({
           type: "error",
-          message: "Something Went Wrong, please try again later!",
+          message: response?.data?.message || response,
           isShow: true,
         })
       );
@@ -80,10 +109,61 @@ export default function RegisterUserForm({ setAlertModalInfo, data }) {
         );
       }, 4000);
     }
-  }
+  };
+
+  // async function addUser(data) {
+  //   try {
+  //     const userResponse = await postRequest("/register", data, {});
+  //     if (userResponse.data.response_type !== "error") {
+  //       setAlertModalInfo({
+  //         isModalOpen: true,
+  //         buttonLink: `/activate-account/${userResponse.data.data.activationCode}`,
+  //       });
+  //       reset();
+  //     } else {
+  //       dispatch(
+  //         updateToast({
+  //           type: "error",
+  //           message: userResponse.data.message,
+  //           isShow: true,
+  //         })
+  //       );
+  //       setTimeout(() => {
+  //         dispatch(
+  //           updateToast({
+  //             type: "error",
+  //             message: null,
+  //             isShow: false,
+  //           })
+  //         );
+  //       }, 4000);
+  //     }
+  //   } catch (error) {
+  //     dispatch(
+  //       updateToast({
+  //         type: "error",
+  //         message: "Something Went Wrong, please try again later!",
+  //         isShow: true,
+  //       })
+  //     );
+  //     setTimeout(() => {
+  //       dispatch(
+  //         updateToast({
+  //           type: "error",
+  //           message: null,
+  //           isShow: false,
+  //         })
+  //       );
+  //     }, 4000);
+  //   }
+  // }
 
   return (
-    <form id="addUser" className="space-y-6" onSubmit={handleSubmit(addUser)}>
+    <form
+      id="addUser"
+      className="space-y-6"
+      onSubmit={handleSubmit(submitData)}
+    >
       <Input
         parentClassName="mt-2"
         inputType="text"

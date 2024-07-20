@@ -22,7 +22,6 @@ export default function Comment({ taskId, taskComment }) {
 
   const submitData = async (taskCommentPayLoad) => {
     taskCommentPayLoad.taskId = taskId.toString();
-    console.log(taskCommentPayLoad);
     const response = await addProjectTaskComment(taskCommentPayLoad);
     if (
       response?.data?.response_type &&
@@ -60,8 +59,6 @@ export default function Comment({ taskId, taskComment }) {
       }, 4000);
     }
   };
-
-  console.log(errors);
 
   return (
     <>

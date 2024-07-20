@@ -1,15 +1,13 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { updateModalInfo, updateToast } from "../features/generalSlice";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { projectSchema } from "../validations/projectValidation";
 import { addProject, updateProject } from "../services/user/project";
 import Input from "./Input";
 
 export default function ProjectForm({ isModalOpen, data, getData }) {
-  const generalData = useSelector((state) => state.general);
-  const { modalInfo } = generalData;
   const dispatch = useDispatch();
 
   const {

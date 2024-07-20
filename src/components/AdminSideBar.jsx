@@ -1,11 +1,33 @@
 import { Link, useLocation } from "react-router-dom";
 import Navbar from "./Navbar";
+import Modal from "./Modal";
+import { useSelector } from "react-redux";
+import RegisterUserForm from "./RegisterUserForm";
+import Toast from "./Toast";
 
 export default function AdminSideBar() {
+  const generalData = useSelector((state) => state.general);
+  const { modalInfo, toastInfo } = generalData;
   const location = useLocation();
 
   return (
     <>
+      <Toast
+        toastId="userToast"
+        isShow={toastInfo.isShow}
+        type={toastInfo.type}
+        message={toastInfo.message}
+      />
+      <Modal
+        isModalOpen={modalInfo.isModalOpen}
+        modalTitle={modalInfo.modalBody}
+        renderModalBody={() => {
+          if (modalInfo.modalBody === "User Profile") {
+            return <RegisterUserForm setAlertModalInfo={() => {}} />;
+          }
+        }}
+      />
+
       <Navbar />
       <aside
         id="logo-sidebar"

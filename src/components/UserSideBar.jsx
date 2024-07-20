@@ -78,10 +78,11 @@ export default function UserSideBar() {
           }
 
           if (modalInfo.modalBody === "User Profile") {
-            return <RegisterUserForm />;
+            return <RegisterUserForm setAlertModalInfo={() => {}} />;
           }
         }}
       />
+
       <Navbar />
 
       <aside
