@@ -8,6 +8,17 @@ const initialState = {
   },
   isLoading: false,
   error: null,
+  modalInfo: {
+    isModalOpen: false,
+    modalBody: null,
+    toBeUpdate: null,
+  },
+  drawerInfo: {
+    isDrawerOpen: false,
+    isView: false,
+    toBeUpdate: null,
+    toBeView: null,
+  },
 };
 
 const generalSlice = createSlice({
@@ -18,12 +29,24 @@ const generalSlice = createSlice({
       return (state = { ...state, ["toastInfo"]: action.payload });
     },
     updateLoading: (state, action) => {
-      state.isLoading = action.payload.isLoading;
-      state.error = action.payload.error;
+      state.isLoading = action?.payload?.isLoading;
+      state.error = action?.payload?.error;
+    },
+    updateModalInfo: (state, action) => {
+      state.modalInfo.isModalOpen = action.payload.isModalOpen;
+      state.modalInfo.modalBody = action.payload.modalBody;
+      state.modalInfo.toBeUpdate = action.payload.toBeUpdate;
+    },
+    updateDrawerInfo: (state, action) => {
+      state.drawerInfo.isDrawerOpen = action.payload.isDrawerOpen;
+      state.drawerInfo.isView = action.payload.isView;
+      state.drawerInfo.toBeUpdate = action.payload.toBeUpdate;
+      state.drawerInfo.toBeView = action.payload.toBeView;
     },
   },
 });
 
-export const { updateToast, updateLoading } = generalSlice.actions;
+export const { updateToast, updateLoading, updateModalInfo, updateDrawerInfo } =
+  generalSlice.actions;
 
 export default generalSlice.reducer;

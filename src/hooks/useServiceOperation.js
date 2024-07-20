@@ -31,15 +31,22 @@ export default function useServiceOperation() {
                   error: null,
                 })
               );
-              setData({
-                originalData: data,
-                transformData: response.transformedData,
-                filteredData: response.transformedData?.slice(
-                  limitOfData.lowerLimitOfData,
-                  limitOfData.upperLimitOfData
-                ),
-                searchData: [],
-              });
+              if (limitOfData) {
+                setData({
+                  originalData: data,
+                  transformData: response.transformedData,
+                  filteredData: response.transformedData?.slice(
+                    limitOfData.lowerLimitOfData,
+                    limitOfData.upperLimitOfData
+                  ),
+                  searchData: [],
+                });
+              } else {
+                setData({
+                  originalData: data,
+                  transformData: response.transformedData,
+                });
+              }
             });
           } else {
             dispatch(
@@ -48,6 +55,7 @@ export default function useServiceOperation() {
                 error: data,
               })
             );
+            return resolve(false);
           }
           return resolve(true);
         });

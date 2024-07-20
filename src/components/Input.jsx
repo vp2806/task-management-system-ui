@@ -11,11 +11,14 @@ export default function Input({
   handleChange,
   error,
   maxDate,
+  minDate,
   isCompulsory,
   isOnClick,
   isMaxLength,
   isAccept,
   registerInput,
+  list,
+  isMultiple,
 }) {
   return (
     <div className={parentClassName}>
@@ -33,6 +36,7 @@ export default function Input({
         onChange={handleChange}
         defaultValue={inputValue && inputValue}
         max={maxDate ? maxDate : ""}
+        min={minDate ? minDate : ""}
         placeholder={inputPlaceholder}
         onClick={(event) => {
           if (isOnClick) {
@@ -42,6 +46,8 @@ export default function Input({
         maxLength={isMaxLength && isMaxLength}
         accept={isAccept ? isAccept : ""}
         {...registerInput(inputName)}
+        list={list ? list : ""}
+        multiple={isMultiple ? isMultiple : false}
       />
       {error && <span className="text-red-600">{error}</span>}
     </div>

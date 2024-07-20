@@ -134,7 +134,9 @@ export default function SetPasssword() {
         {isValidLink.error}
       </h2>
       {isValidLink.isLoading ? (
-        <Loader />
+        <Loader
+          className={"flex items-center justify-center w-full rounded-lg p-5"}
+        />
       ) : !isValidLink.error ? (
         <div className="flex flex-1 flex-col  min-h-full lg:mx-auto mt-20 mb-20 lg:w-full lg:max-w-lg  px-6 py-9">
           <div className="p-5 bg-white border border-gray-200 rounded-lg shadow">

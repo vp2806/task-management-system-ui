@@ -29,7 +29,7 @@ export function transformData(
               } else {
                 newData = { ...newData, [columnMapping[column]]: data[column] };
               }
-            } else if (data[column] && !columnMapping[column]) {
+            } else if (data[column] !== null && !columnMapping[column]) {
               if (columnValueMapping && columnValueMapping[column]) {
                 newData = {
                   ...newData,
@@ -45,7 +45,9 @@ export function transformData(
               newData = { ...newData, [[columnMapping[column]]]: "-" };
             } else if (data[column] === null) {
               newData = { ...newData, [column]: "-" };
-            } else if (actionElements) {
+            }
+
+            if (column === "Actions" && actionElements) {
               if (data["deleted_at"]) {
                 newData = {
                   ...newData,
