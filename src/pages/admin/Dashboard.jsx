@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import AdminSideBar from "../../components/AdminSideBar";
 import PieChart from "../../components/PieChart";
 import { getTaskCategoryData } from "../../services/admin/projectStatistics";
-import { CategoryScale, Colors } from "chart.js";
+import { CategoryScale } from "chart.js";
 import Chart from "chart.js/auto";
 import { useDispatch, useSelector } from "react-redux";
 import { updateLoading } from "../../features/generalSlice";
