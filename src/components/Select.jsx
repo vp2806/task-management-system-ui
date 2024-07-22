@@ -10,6 +10,7 @@ export default function InputSelect({
   error,
   isMultiple,
   handleChange,
+  isDefaultOption,
 }) {
   function getOptions() {
     const options = selectOptions.map((option, index) => {
@@ -38,9 +39,12 @@ export default function InputSelect({
         {...registerInput(selectName)}
         multiple={isMultiple ? isMultiple : false}
       >
-        <option value="" key="">
-          {`${label ? "Search " + label : "Filter Task By"}`}
-        </option>
+        {isDefaultOption && (
+          <option value="" key="">
+            {`${label ? "Search " + label : "Filter Task By"}`}
+          </option>
+        )}
+
         {getOptions()}
       </select>
       {error && <span className="text-red-600">{error}</span>}

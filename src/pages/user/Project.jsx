@@ -28,7 +28,7 @@ import { filterByOptions, priorityLevelOptions } from "../../helpers/data";
 
 export default function Project() {
   const generalData = useSelector((state) => state.general);
-  const { toastInfo, isLoading, drawerInfo, error } = generalData;
+  const { toastInfo, isLoading, drawerInfo } = generalData;
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -231,6 +231,7 @@ export default function Project() {
                 labelClassName="block mb-2 text-sm font-medium text-gray-900"
                 label={null}
                 registerInput={() => {}}
+                isDefaultOption={true}
                 selectOptions={filterByOptions}
                 handleChange={handleFilter}
               />
@@ -240,6 +241,7 @@ export default function Project() {
                 labelClassName="block mb-2 text-sm font-medium text-gray-900"
                 label={null}
                 registerInput={() => {}}
+                isDefaultOption={true}
                 selectOptions={
                   filterValue?.taskCategory?.length >= 0
                     ? taskCategory?.transformData

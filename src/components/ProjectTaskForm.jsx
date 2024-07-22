@@ -136,6 +136,7 @@ export default function ProjectTaskForm({
         selectName="taskCategory"
         labelClassName="block mb-2 text-sm font-medium text-gray-900"
         label="Category"
+        isDefaultOption={true}
         selectOptions={taskCategory}
         error={errors?.taskCategory?.message}
         isCompulsory={true}
@@ -199,6 +200,7 @@ export default function ProjectTaskForm({
           selectName="assigneeName"
           labelClassName="block mb-2 text-sm font-medium text-gray-900"
           label="Assignee"
+          isDefaultOption={true}
           selectOptions={taskAssignees}
           error={
             errors?.assigneeName?.message ||
@@ -215,6 +217,7 @@ export default function ProjectTaskForm({
         selectName="priorityLevel"
         labelClassName="block mb-2 text-sm font-medium text-gray-900"
         label="Priority Level"
+        isDefaultOption={true}
         selectOptions={priorityLevelOptions}
         error={errors?.priorityLevel?.message}
         isCompulsory={true}
@@ -227,6 +230,7 @@ export default function ProjectTaskForm({
           selectName="taskStatus"
           labelClassName="block mb-2 text-sm font-medium text-gray-900"
           label="Task Status"
+          isDefaultOption={true}
           selectOptions={taskStatusOptions}
           error={errors?.taskStatus?.message}
           isCompulsory={true}
