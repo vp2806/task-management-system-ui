@@ -1,8 +1,10 @@
 import { getRequest } from "../../helpers/axiosHelper";
 
-export async function getTaskCategoryData() {
+export async function getTaskCategoryData(filterBy) {
   try {
-    const response = await getRequest("/task-category-data");
+    const response = await getRequest(
+      `/task-category-data?taskCategory=${filterBy}`
+    );
     if (response.data.response_type !== "error") {
       return response.data.data;
     }

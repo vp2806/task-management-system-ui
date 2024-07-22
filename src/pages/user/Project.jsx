@@ -231,6 +231,7 @@ export default function Project() {
                 labelClassName="block mb-2 text-sm font-medium text-gray-900"
                 label={null}
                 registerInput={() => {}}
+                isDefaultOption={true}
                 selectOptions={filterByOptions}
                 handleChange={handleFilter}
               />
@@ -240,6 +241,7 @@ export default function Project() {
                 labelClassName="block mb-2 text-sm font-medium text-gray-900"
                 label={null}
                 registerInput={() => {}}
+                isDefaultOption={true}
                 selectOptions={
                   filterValue?.taskCategory?.length >= 0
                     ? taskCategory?.transformData

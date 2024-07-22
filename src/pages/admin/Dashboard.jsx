@@ -7,23 +7,26 @@ import Chart from "chart.js/auto";
 import { useDispatch, useSelector } from "react-redux";
 import { updateLoading } from "../../features/generalSlice";
 import Loader from "../../components/Loader";
+import Error from "../../components/Error";
 
 Chart.register(CategoryScale);
 
 export default function Dashboard() {
   const generalData = useSelector((state) => state.general);
-  const { isLoading } = generalData;
+  const { isLoading, error } = generalData;
   const dispatch = useDispatch();
   const [chartData, setChartData] = useState([]);
+  const [taskCategoryFilterBy, setTaskCategoryFilterBy] =
+    useState("Last 7 Days");
 
-  useEffect(() => {
-    dispatch(
-      updateLoading({
-        isLoading: true,
-        error: null,
-      })
-    );
-    getTaskCategoryData().then((data) => {
+  const getData = () => {
+    getTaskCategoryData(taskCategoryFilterBy).then((data) => {
+      dispatch(
+        updateLoading({
+          isLoading: false,
+          error: null,
+        })
+      );
       if (Array.isArray(data)) {
         const newData = data.map((category) => {
           return {
@@ -38,9 +41,30 @@ export default function Dashboard() {
           })
         );
         setChartData(newData);
+      } else {
+        dispatch(
+          updateLoading({
+            isLoading: false,
+            error: data,
+          })
+        );
       }
     });
+  };
+
+  useEffect(() => {
+    dispatch(
+      updateLoading({
+        isLoading: true,
+        error: null,
+      })
+    );
+    getData();
   }, []);
+
+  useEffect(() => {
+    getData();
+  }, [taskCategoryFilterBy]);
 
   const chartDataOptions = {
     labels: chartData?.map((category) => category.categoryName),
@@ -70,8 +94,15 @@ export default function Dashboard() {
             className={"flex items-center justify-center w-full rounded-lg p-5"}
           />
         ) : (
-          <PieChart chartData={chartDataOptions} />
+          !error && (
+            <PieChart
+              chartTitle={"Task Overview"}
+              chartData={chartDataOptions}
+              setChartFilterBy={setTaskCategoryFilterBy}
+            />
+          )
         )}
+        {error && <Error error={error} />}
       </div>
     </>
   );
